@@ -1,0 +1,23 @@
+<configuration scan="true">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                ${CONSOLE_LOG_PATTERN}
+            </Pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>./src/main/resources/log/api.log</file>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"application":"goodsharing"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+
+</configuration>
