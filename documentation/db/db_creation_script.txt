@@ -1,0 +1,92 @@
+DROP TABLE IF EXISTS closed_loans;
+DROP TABLE IF EXISTS loans;
+DROP TABLE IF EXISTS discussions;
+DROP TABLE IF EXISTS wishlist_items;
+DROP TABLE IF EXISTS wishlists;
+DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS announcements;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS admins;
+
+CREATE TABLE admins(
+	id int primary key identity(1, 1), 
+	email varchar(100),
+	password varchar(50)
+);
+
+CREATE TABLE users(
+	id int primary key identity(1, 1), 
+	email varchar(100),
+	password varchar(50),
+	first_name varchar(50),
+	last_name varchar(50),
+	phone_number varchar(15)
+);
+
+CREATE TABLE announcements(
+	id int primary key identity(1, 1), 
+	owner_id int,
+	name varchar(100),
+	description  varchar(500),
+	location varchar(55),
+	category int,
+	created_date date default current_timestamp,
+	duration int,
+	status int,
+    price_per_day int,
+	foreign key (owner_id) references users(id) on delete set null
+);
+
+CREATE TABLE images(
+	id int primary key identity(1, 1), 
+	image_bytes varbinary(MAX),
+	announcement_id int,
+	foreign key (announcement_id) references announcements(id) on delete cascade
+);
+
+CREATE TABLE wishlists(
+	id int primary key identity(1, 1), 
+	owner_id int,
+	foreign key (owner_id) references users(id) on delete set null
+);
+
+CREATE TABLE wishlist_items(
+	id int primary key identity(1, 1), 
+	wishlist_id int,
+	announcement_id int,
+	foreign key (wishlist_id) references wishlists(id) on delete cascade,
+	foreign key (announcement_id) references announcements(id) on delete cascade
+);
+
+CREATE TABLE discussions(
+	id int primary key identity(1, 1), 
+	interested_user_id int,
+	announcement_id int,
+	created_date date default current_timestamp,
+	foreign key (interested_user_id) references users(id) on delete cascade,
+	foreign key (announcement_id) references announcements(id) on delete cascade
+);
+
+CREATE TABLE loans(
+	id int primary key identity(1, 1), 
+	discussion_id int,
+	loan_date date default current_timestamp,
+	foreign key (discussion_id) references discussions(id) on delete cascade
+);
+
+CREATE TABLE closed_loans(
+	id int primary key identity(1, 1), 
+	loan_id int,
+	close_date date default current_timestamp,
+	foreign key (loan_id) references loans(id) on delete cascade
+);
+
+insert into admins(email, password) values ('email1', 'pass1'), ('email2', 'pass2');
+insert into users(email, password, first_name, last_name, phone_number) values ('user_email1', 'user_pass1', 'first_name1', 'last_name1', 'phone_number1'), ('user_email2', 'user_pass2', 'first_name2', 'last_name2', 'phone_number2');
+insert into announcements(owner_id, name, description, location, category, duration, status, price_per_day) values (1, 'name1', 'descr1', 'loc1', 0, 3, 0, 50), (1, 'name2', 'descr2', 'loc2', 0, 3, 0, 50);
+insert into images(image_bytes, announcement_id) values (cast('image1' as varbinary(max)), 1), (cast('image2' as varbinary(max)), 1);
+insert into wishlists(owner_id) values (1), (2);
+insert into wishlist_items(wishlist_id, announcement_id) values (1, 1), (1, 2);
+insert into discussions (interested_user_id, announcement_id) values (1, 1), (1, 2);
+insert into loans(discussion_id) values (1);
+insert into closed_loans(loan_id) values (1);
