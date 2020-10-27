@@ -1,9 +1,9 @@
 package ro.ubb.model;
 
-
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @ToString
 @Getter
@@ -13,18 +13,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "admins")
-public class Admin {
+@Table(name = "closed_loans")
+public class ClosedLoan {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
 
-    @Column(name = "email")
-    private String email;
+    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "closedLoan")
+    private Loan loan;
 
-    @Column(name="password")
-    private String password;
-
+    @Column(name = "close_date")
+    private Date closeDate;
 }

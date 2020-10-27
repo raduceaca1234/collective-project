@@ -1,6 +1,5 @@
 package ro.ubb.model;
 
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,18 +12,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "admins")
-public class Admin {
+@Table(name = "images")
+public class Image {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
 
-    @Column(name = "email")
-    private String email;
+    @Lob
+    @Column(name = "image_bytes")
+    private Byte[] imageBytes;
 
-    @Column(name="password")
-    private String password;
-
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "announcement_id")
+    private Announcement announcement;
 }
