@@ -20,6 +20,7 @@ public class Image {
     @EqualsAndHashCode.Include
     private int id;
 
+    @ToString.Exclude
     @Lob
     @Column(name = "image_bytes")
     private Byte[] imageBytes;
