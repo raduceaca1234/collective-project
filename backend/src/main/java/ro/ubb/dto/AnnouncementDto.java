@@ -2,11 +2,7 @@ package ro.ubb.dto;
 
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
-import ro.ubb.model.User;
-import ro.ubb.model.enums.Category;
-import ro.ubb.model.enums.Status;
 
-import javax.persistence.Entity;
 import java.util.List;
 
 @Getter

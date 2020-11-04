@@ -24,7 +24,7 @@ public class Loan {
     @OneToOne(cascade = CascadeType.MERGE, mappedBy = "loan")
     private Discussion discussion;
 
-    @Column(name = "loan_date")
+    @Column(name = "loan_date", insertable = false)
     private Date loanDate;
 
     @ToString.Exclude

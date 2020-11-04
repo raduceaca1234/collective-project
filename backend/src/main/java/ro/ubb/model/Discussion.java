@@ -21,7 +21,7 @@ public class Discussion {
     @EqualsAndHashCode.Include
     private int id;
 
-    @Column(name = "created_date")
+    @Column(name = "created_date", insertable = false)
     private Date createdDate;
 
     @ToString.Exclude

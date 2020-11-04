@@ -24,6 +24,6 @@ public class ClosedLoan {
     @OneToOne(cascade = CascadeType.MERGE, mappedBy = "closedLoan")
     private Loan loan;
 
-    @Column(name = "close_date")
+    @Column(name = "close_date", insertable = false)
     private Date closeDate;
 }

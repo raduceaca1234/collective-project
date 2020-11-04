@@ -37,7 +37,7 @@ public class Announcement {
     @Column(name = "location")
     private String location;
 
-    @Column(name = "created_date")
+    @Column(name = "created_date", insertable = false)
     private Date date;
 
     @Column(name = "category")
