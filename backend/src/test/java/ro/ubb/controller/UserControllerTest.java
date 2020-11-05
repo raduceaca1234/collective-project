@@ -9,8 +9,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.CredentialsDto;
 import ro.ubb.dto.LoginDataDto;
+import ro.ubb.dto.RegisterDto;
 import ro.ubb.model.User;
 import ro.ubb.service.UserService;
+import ro.ubb.validator.UserValidator;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -25,6 +27,7 @@ class UserControllerTest {
   @Autowired private MockMvc mvc;
   @MockBean private UserService userService;
   @MockBean private DtoConverter dtoConverter;
+
 
   @Test
   public void loginUser_userExists() throws Exception {
@@ -71,5 +74,31 @@ class UserControllerTest {
     verify(dtoConverter)
         .convertCredentialsDto(
             CredentialsDto.builder().email("some@invalid.email").password("NOT FOUND").build());
+  }
+  @Test
+  public void registerUser_successful() throws Exception {
+    User user = User.builder().firstName("Ana").lastName("Gloria")
+            .email("some@valid.email").password("Password!123")
+            .phoneNumber("0723232323").build();
+    given(dtoConverter.convertRegisterDto(any(RegisterDto.class))).willReturn(user);
+    given(userService.register(any(User.class))).willReturn(true);
+    mvc.perform(
+            post("/api/user/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                            "{\n"
+                                    + "    \"firstName\": \"Ana\",\n"
+                                    + "    \"lastName\": \"Gloria\",\n"
+                                    + "    \"email\": \"some@valid.email\",\n"
+                                    + "    \"password\": \"Password!123\",\n"
+                                    + "    \"phoneNumber\": \"0723232323\"\n"
+                                    + "}"))
+            .andExpect(status().isOk());
+    verify(userService).register(user);
+    verify(dtoConverter)
+            .convertRegisterDto(
+                    RegisterDto.builder().firstName("Ana").lastName("Gloria")
+                            .email("some@valid.email").password("Password!123")
+                            .phoneNumber("0723232323").build());
   }
 }

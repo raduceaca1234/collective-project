@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsByEmailAndPassword(user.getEmail(), user.getPassword())) {
             if (!userValidator.validatePassword(user.getPassword())) {
                 userRepository.save(user);
+                return true;
             }
             throw new SpecialError("Not a valid password", HttpStatus.FORBIDDEN);
         }
@@ -40,5 +41,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+    @Autowired
+    public void setUserValidator(UserValidator userValidator){
+        this.userValidator = userValidator;
     }
 }

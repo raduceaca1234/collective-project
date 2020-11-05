@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpServerErrorException;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.CredentialsDto;
+import ro.ubb.dto.RegisterDto;
 import ro.ubb.model.User;
 import ro.ubb.service.UserService;
 
@@ -39,20 +39,17 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid CredentialsDto credentialsDto) {
-        try {
-            log.debug("Got register call with email = {}", credentialsDto.getEmail());
-            User user = dtoConverter.convertCredentialsDto(credentialsDto);
-            if (userService.register(user)) {
-                log.debug("User with email = {} successfully singed up", credentialsDto.getEmail());
-            }
-            return new ResponseEntity(null, HttpStatus.OK);
-        } catch (HttpServerErrorException errorException) {
-            log.debug(errorException.getMessage(), credentialsDto.getEmail());
-
-            return new ResponseEntity<>(errorException.getMessage(), errorException.getStatusCode());
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterDto registerDto) {
+        log.debug("Got register call with email = {}", registerDto.getEmail());
+        User user = dtoConverter.convertRegisterDto(registerDto);
+        if (userService.register(user)) {
+            log.debug("User with email = {} successfully singed up", registerDto.getEmail());
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } else {
+            log.debug("User with email = {} couldn't be created.",
+                    registerDto.getEmail());
+            return ResponseEntity.noContent().build();
         }
-
     }
 
     @Autowired
@@ -64,4 +61,5 @@ public class UserController {
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
+
 }

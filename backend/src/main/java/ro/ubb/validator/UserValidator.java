@@ -1,8 +1,12 @@
 package ro.ubb.validator;
 
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+@Component
 public class UserValidator {
 
 
