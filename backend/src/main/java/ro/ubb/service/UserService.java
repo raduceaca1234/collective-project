@@ -6,5 +6,7 @@ public interface UserService {
 
     boolean validUserCredentials(User user);
 
+    boolean register(User user);
+
     Integer login(User user);
 }

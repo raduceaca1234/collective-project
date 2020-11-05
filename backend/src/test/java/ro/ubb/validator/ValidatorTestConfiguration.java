@@ -1,10 +1,10 @@
-package ro.ubb.service;
+package ro.ubb.validator;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
 @TestConfiguration
-@ComponentScan(basePackages = "ro.ubb.service")
-public class ServiceTestConfiguration {
+@ComponentScan(basePackages = "ro.ubb.validator")
 
+public class ValidatorTestConfiguration {
 }
