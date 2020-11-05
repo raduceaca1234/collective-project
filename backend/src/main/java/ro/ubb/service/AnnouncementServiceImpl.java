@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ro.ubb.model.Announcement;
 import ro.ubb.repository.AnnouncementRepository;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
@@ -19,5 +21,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public Announcement add(Announcement announcement) {
         return announcementRepository.save(announcement);
+    }
+
+    @Override
+    public List<Announcement> getAll() {
+        return announcementRepository.findAll();
     }
 }
