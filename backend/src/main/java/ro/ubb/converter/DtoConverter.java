@@ -20,6 +20,17 @@ public class DtoConverter {
         .password(credentialsDto.getPassword())
         .build();
   }
+  public User convertRegisterDto(ro.ubb.dto.RegisterDto registerDto) {
+    log.debug(
+            "converting credentialsDto = {} to an User POJO with email", registerDto.getEmail());
+    return User.builder()
+            .firstName(registerDto.getFirstName())
+            .lastName(registerDto.getLastName())
+            .email(registerDto.getEmail())
+            .password(registerDto.getPassword())
+            .phoneNumber(registerDto.getPhoneNumber())
+            .build();
+  }
 
   public Object convertSuccessfulLogin(Integer loggedInUserId) {
     return LoginDataDto.builder().id(loggedInUserId).build();
