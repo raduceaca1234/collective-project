@@ -3,7 +3,6 @@ package ro.ubb.repository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,4 +35,6 @@ public class UserRepositoryTest {
     public void getIdOfUserWithCredentials_userDoesNotExist(){
         Assertions.assertNull(userRepository.getIdOfUserWithCredentials("NOT EXISTING", "NOT EXISTING"));
     }
+
+
 }

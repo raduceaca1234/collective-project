@@ -2,6 +2,7 @@ package ro.ubb.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,14 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
-import ro.ubb.model.User;
-import ro.ubb.model.enums.Category;
-import ro.ubb.model.enums.Status;
-import ro.ubb.service.AnnouncementServiceImpl;
-import ro.ubb.service.ImageServiceImpl;
+import ro.ubb.service.*;
 
 import java.io.IOException;
 
@@ -25,30 +23,22 @@ import java.io.IOException;
 @Slf4j
 public class AnnouncementController {
 
-    private final AnnouncementServiceImpl announcementService;
-    private final ImageServiceImpl imageService;
-
-    public AnnouncementController(AnnouncementServiceImpl announcementService, ImageServiceImpl imageService) {
-        this.announcementService = announcementService;
-        this.imageService = imageService;
-    }
-
+    private AnnouncementService announcementService;
+    private ImageService imageService;
+    private DtoConverter dtoConverter;
+    private UserService userService;
 
     @PostMapping
     ResponseEntity<?> postAnnouncement(@ModelAttribute AnnouncementDto announcementDto){
-        Announcement announcementToAdd = announcementService.add(Announcement.builder()
-                .user(User.builder().id(announcementDto.getOwnerId()).build())
-                .name(announcementDto.getName())
-                .location(announcementDto.getLocation())
-                .description(announcementDto.getDescription())
-                .category(Category.valueOf(announcementDto.getCategory()))
-                .status(Status.OPEN)
-                .duration(announcementDto.getDuration())
-                .pricePerDay(announcementDto.getPricePerDay())
-                .build());
+        Announcement announcementToAdd = dtoConverter.convertAnnouncementDtoForPosting(announcementDto);
+
+        if (!userService.existsById(announcementDto.getOwnerId())){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         log.info("calling announcementService add...");
         Announcement addedAnnouncement = announcementService.add(announcementToAdd);
-        log.info("announcementSerivce add finished...");
+        log.info("announcementService add finished...");
 
         if (announcementDto.getImages()!=null) {
             for (MultipartFile image : announcementDto.getImages()) {
@@ -68,5 +58,23 @@ public class AnnouncementController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Autowired
+    public void setAnnouncementService(AnnouncementService announcementService) {
+        this.announcementService = announcementService;
+    }
 
+    @Autowired
+    public void setImageService(ImageService imageService) {
+        this.imageService = imageService;
+    }
+
+    @Autowired
+    public void setDtoConverter(DtoConverter dtoConverter) {
+        this.dtoConverter = dtoConverter;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 }

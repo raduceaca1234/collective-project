@@ -1,6 +1,5 @@
 package ro.ubb.service;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import ro.ubb.model.enums.Status;
 public class AnnouncementServiceTest {
 
     @Autowired
-    private AnnouncementServiceImpl announcementService;
+    private AnnouncementService announcementService;
 
     @Test
     public void testAddAnnouncement(){
@@ -35,22 +34,9 @@ public class AnnouncementServiceTest {
                 .status(Status.OPEN)
                 .build();
         Announcement afterAdding = announcementService.add(added);
-        Assert.assertEquals(added.getName(), announcementService.getAll().get(2).getName());
-        Assert.assertEquals(afterAdding.getCategory(), Category.AGRICULTURE);
+        Assertions.assertEquals(added.getName(), announcementService.getAll().get(2).getName());
+        Assertions.assertEquals(afterAdding.getCategory(), Category.AGRICULTURE);
+        Assertions.assertEquals(announcementService.getAll().size(),3);
     }
 
-    @Test()
-    public void testAddAnnouncementNonExistingUser(){
-        Announcement added = Announcement.builder()
-                .user(User.builder().id(5).build())
-                .name("TestName1")
-                .description("TestDescription1")
-                .location("TestLocation1")
-                .duration(30)
-                .category(Category.AGRICULTURE)
-                .status(Status.OPEN)
-                .build();
-        Assertions.assertThrows(RuntimeException.class,
-                ()->announcementService.add(added));
-    }
 }

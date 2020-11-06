@@ -1,6 +1,7 @@
 package ro.ubb.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.ubb.model.Image;
 import ro.ubb.repository.ImageRepository;
@@ -11,11 +12,7 @@ import java.util.List;
 @Service
 public class ImageServiceImpl implements ImageService{
 
-    private final ImageRepository imageRepository;
-
-    public ImageServiceImpl(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
+    private ImageRepository imageRepository;
 
     @Override
     public Image add(Image image) {
@@ -26,5 +23,10 @@ public class ImageServiceImpl implements ImageService{
     @Override
     public List<Image> getImages() {
         return imageRepository.findAll();
+    }
+
+    @Autowired
+    public void setImageRepository(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
     }
 }
