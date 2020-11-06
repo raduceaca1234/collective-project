@@ -9,4 +9,6 @@ public interface UserService {
     boolean register(User user);
 
     Integer login(User user);
+
+    boolean existsById(int userId);
 }

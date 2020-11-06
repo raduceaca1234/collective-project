@@ -21,6 +21,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Integer login(User user) {
+        return userRepository.getIdOfUserWithCredentials(user.getEmail(), user.getPassword());
+    }
+    @Override
+    public boolean existsById(int userId) {
+        return userRepository.existsById(userId);
+    }
+
+    @Override
     public boolean register(User user) {
         if (!userRepository.existsByEmailAndPassword(user.getEmail(), user.getPassword())) {
             if (!userValidator.validatePassword(user.getPassword())) {
@@ -32,18 +41,14 @@ public class UserServiceImpl implements UserService {
         throw new SpecialError("User with this email: " + user.getEmail() + " already registered", HttpStatus.FORBIDDEN);
     }
 
-    @Override
-    public Integer login(User user) {
-        return userRepository.getIdOfUserWithCredentials(user.getEmail(), user.getPassword());
-    }
-
-
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Autowired
     public void setUserValidator(UserValidator userValidator){
         this.userValidator = userValidator;
     }
+
 }
