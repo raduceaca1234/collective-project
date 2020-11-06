@@ -2,10 +2,12 @@ package ro.ubb.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ro.ubb.error.SpecialError;
 import ro.ubb.model.User;
-import ro.ubb.repository.AdminRepository;
 import ro.ubb.repository.UserRepository;
+import ro.ubb.validator.UserValidator;
 
 @Service
 @Slf4j
