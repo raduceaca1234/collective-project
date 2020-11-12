@@ -1,5 +1,7 @@
 package ro.ubb.controller;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -8,10 +10,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
+import ro.ubb.dto.BytesAnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Status;
+import ro.ubb.security.JWTUtil;
 import ro.ubb.service.AnnouncementService;
 import ro.ubb.service.ImageService;
 import ro.ubb.service.UserService;
@@ -40,12 +44,13 @@ public class AnnouncementControllerTest {
     private UserService userService;
     @MockBean
     private DtoConverter dtoConverter;
-
+    @MockBean
+    private JWTUtil jwtUtil;
 
     @Test
     public void testPostAnnouncement_userExists() throws Exception {
         AnnouncementDto dto = AnnouncementDto.builder()
-                .ownerId(1)
+                .ownerId("token")
                 .name("test_name1")
                 .description("test_description1")
                 .location("test_location1")
@@ -64,14 +69,17 @@ public class AnnouncementControllerTest {
                 .pricePerDay(50)
                 .status(Status.OPEN)
                 .build();
-
+        Claims claims = new DefaultClaims();
+        claims.setId("1");
+        given(jwtUtil.createJWT(any(Integer.class),any(Long.class))).willReturn("token");
+        given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
         given(userService.existsById(any(Integer.class))).willReturn(true);
         given(dtoConverter.convertAnnouncementDtoForPosting(any(AnnouncementDto.class))).willReturn(announcement);
         given(announcementService.add(any(Announcement.class))).willReturn(Announcement.builder().id(3).build());
         mockMvc.perform(
                 post("/api/announcement")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .param("ownerId", String.valueOf(1))
+                        .param("ownerId", jwtUtil.createJWT(1,JWTUtil.DEFAULT_VALIDITY))
                         .param("name","test_name1")
                         .param("description","test_description1")
                         .param("location","test_location1")
@@ -79,7 +87,6 @@ public class AnnouncementControllerTest {
                         .param("duration","30")
                         .param("pricePerDay","50"))
                 .andExpect(status().isCreated());
-
         verify(userService).existsById(1);
         verify(dtoConverter).convertAnnouncementDtoForPosting(dto);
         verify(announcementService).add(announcement);
@@ -88,7 +95,7 @@ public class AnnouncementControllerTest {
     @Test
     public void testPostAnnouncement_userDoesNotExist() throws Exception {
         AnnouncementDto dto = AnnouncementDto.builder()
-                .ownerId(100)
+                .ownerId("token")
                 .name("test_name1")
                 .description("test_description1")
                 .location("test_location1")
@@ -107,12 +114,16 @@ public class AnnouncementControllerTest {
                 .pricePerDay(50)
                 .status(Status.OPEN)
                 .build();
+        Claims claims = new DefaultClaims();
+        claims.setId("100");
+        given(jwtUtil.createJWT(any(Integer.class),any(Long.class))).willReturn("token");
+        given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
         given(dtoConverter.convertAnnouncementDtoForPosting(any(AnnouncementDto.class))).willReturn(announcement);
         given(userService.existsById(any(Integer.class))).willReturn(false);
         mockMvc.perform(
                 post("/api/announcement")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .param("ownerId", String.valueOf(100))
+                        .param("ownerId", jwtUtil.createJWT(100,JWTUtil.DEFAULT_VALIDITY))
                         .param("name","test_name1")
                         .param("description","test_description1")
                         .param("location","test_location1")
@@ -137,9 +148,9 @@ public class AnnouncementControllerTest {
                 .pricePerDay(50)
                 .status(Status.OPEN)
                 .build();
-        AnnouncementDto dto = AnnouncementDto.builder()
+        BytesAnnouncementDto dto = BytesAnnouncementDto.builder()
                 .id(1)
-                .ownerId(1)
+                .ownerId("token")
                 .name("name1")
                 .description("description1")
                 .location("location1")
@@ -148,6 +159,10 @@ public class AnnouncementControllerTest {
                 .duration(3)
                 .pricePerDay(50)
                 .build();
+        Claims claims = new DefaultClaims();
+        claims.setId("100");
+        given(jwtUtil.createJWT(any(Integer.class),any(Long.class))).willReturn("token");
+        given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
         given(announcementService.getById(any(Integer.class))).willReturn(announcement);
         given(imageService.getBytesForAnnouncement(any(Integer.class))).willReturn(new ArrayList<>());
         given(dtoConverter.convertAnnouncementWithImages(any(Announcement.class), any(List.class))).willReturn(dto);

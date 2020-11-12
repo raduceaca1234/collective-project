@@ -11,6 +11,7 @@ import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
+import ro.ubb.security.JWTUtil;
 import ro.ubb.service.AnnouncementService;
 import ro.ubb.service.ImageService;
 import ro.ubb.service.UserService;
@@ -27,12 +28,13 @@ public class AnnouncementController {
     private ImageService imageService;
     private DtoConverter dtoConverter;
     private UserService userService;
+    private JWTUtil jwtUtil;
 
     @PostMapping
     ResponseEntity<?> postAnnouncement(@ModelAttribute AnnouncementDto announcementDto){
         Announcement announcementToAdd = dtoConverter.convertAnnouncementDtoForPosting(announcementDto);
-
-        if (!userService.existsById(announcementDto.getOwnerId())){
+        int ownerId = Integer.parseInt(jwtUtil.decodeJWT(announcementDto.getOwnerId()).getId());
+        if (!userService.existsById(ownerId)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -91,5 +93,10 @@ public class AnnouncementController {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setJwtUtil(JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 }

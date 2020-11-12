@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ImageRepository extends JpaRepository<Image, Integer> {
 
-    @Query("SELECT i.imageBytes FROM Image i where i.id=:id")
-    List<Byte[]> getImageBytesForAnnouncement(@Param("id") int id);
+    @Query("SELECT i.imageBytes FROM Image i where i.announcement.id=:aid")
+    List<Byte[]> getImageBytesForAnnouncement(@Param("aid") int aid);
 }
