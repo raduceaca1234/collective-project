@@ -5,18 +5,21 @@ import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
+import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
-import ro.ubb.service.*;
+import ro.ubb.service.AnnouncementService;
+import ro.ubb.service.ImageService;
+import ro.ubb.service.UserService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/announcement")
@@ -27,6 +30,39 @@ public class AnnouncementController {
     private ImageService imageService;
     private DtoConverter dtoConverter;
     private UserService userService;
+
+    @GetMapping
+    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncements() {
+        int announcementsPerPage = 5;
+
+        log.info("calling announcementService get...");
+        List<Announcement> allAnnouncements = announcementService.getAll();
+        log.info("announcementService get finished...");
+
+        List<PagedAnnouncementDto> pagedAnnouncementDtos = new ArrayList<>();
+        int page = 1;
+        int posOnPage = 0;
+        for (Announcement a : allAnnouncements) {
+            PagedAnnouncementDto pad = dtoConverter.convertAnnouncementForGetPaginated(a);
+            pad.setPageNumber(page);
+            log.info("calling imageService get...");
+            imageService.getImages().stream()
+                    .filter(i -> i.getAnnouncement() == a)
+                    .findFirst()
+                    .ifPresent(i -> pad.setThumbnail(
+                            new MockMultipartFile("thumbnail", ArrayUtils.toPrimitive(i.getImageBytes()))
+                    ));
+            log.info("imageService get finished...");
+            pagedAnnouncementDtos.add(pad);
+
+            posOnPage++;
+            if (posOnPage >= announcementsPerPage){
+                page++;
+                posOnPage = 0;
+            }
+        }
+        return ResponseEntity.ok(pagedAnnouncementDtos);
+    }
 
     @PostMapping
     ResponseEntity<?> postAnnouncement(@ModelAttribute AnnouncementDto announcementDto){

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.dto.LoginDataDto;
+import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
@@ -58,5 +59,22 @@ public class DtoConverter {
   @Autowired
   public void setJwtUtil(JWTUtil jwtUtil) {
     this.jwtUtil = jwtUtil;
+  }
+
+  public PagedAnnouncementDto convertAnnouncementForGetPaginated(Announcement announcement) {
+    log.debug("converting announcement={}", announcement);
+    return PagedAnnouncementDto.builder()
+            .id(announcement.getId())
+            .name(announcement.getName())
+            .description(announcement.getDescription())
+            .location(announcement.getLocation())
+            .category(announcement.getCategory().toString())
+            .createdDate(announcement.getDate().toString())
+            .duration(announcement.getDuration())
+            .status(announcement.getStatus().toString())
+            .pricePerDay(announcement.getPricePerDay())
+            .ownerId(announcement.getUser().getId())
+            .order(1)
+            .build();
   }
 }
