@@ -8,4 +8,6 @@ public interface ImageService {
     Image add(Image image);
 
     List<Image> getImages();
+
+    List<Byte[]> getBytesForAnnouncement(int id);
 }

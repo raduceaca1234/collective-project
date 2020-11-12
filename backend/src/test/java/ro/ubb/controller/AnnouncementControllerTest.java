@@ -16,11 +16,15 @@ import ro.ubb.service.AnnouncementService;
 import ro.ubb.service.ImageService;
 import ro.ubb.service.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AnnouncementController.class)
 public class AnnouncementControllerTest {
@@ -118,5 +122,56 @@ public class AnnouncementControllerTest {
                 .andExpect(status().isNotFound());
         verify(dtoConverter).convertAnnouncementDtoForPosting(dto);
         verify(userService).existsById(announcement.getUser().getId());
+    }
+
+    @Test
+    public void testGetAnnouncementById_Exists() throws Exception {
+        Announcement announcement = Announcement.builder()
+                .id(1)
+                .user(User.builder().id(1).build())
+                .name("name1")
+                .description("description1")
+                .location("location1")
+                .category(Category.AGRICULTURE)
+                .duration(3)
+                .pricePerDay(50)
+                .status(Status.OPEN)
+                .build();
+        AnnouncementDto dto = AnnouncementDto.builder()
+                .id(1)
+                .ownerId(1)
+                .name("name1")
+                .description("description1")
+                .location("location1")
+                .category("AGRICULTURE")
+                .status("OPEN")
+                .duration(3)
+                .pricePerDay(50)
+                .build();
+        given(announcementService.getById(any(Integer.class))).willReturn(announcement);
+        given(imageService.getBytesForAnnouncement(any(Integer.class))).willReturn(new ArrayList<>());
+        given(dtoConverter.convertAnnouncementWithImages(any(Announcement.class), any(List.class))).willReturn(dto);
+        mockMvc.perform(
+                    get("/api/announcement/{id}",1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("name1"))
+                .andExpect(jsonPath("$.pricePerDay").value(50));
+        verify(announcementService).getById(1);
+        verify(imageService).getBytesForAnnouncement(1);
+        verify(dtoConverter).convertAnnouncementWithImages(announcement,new ArrayList<>());
+    }
+
+    @Test
+    public void testGetAnnouncementById_DoesntExist() throws Exception {
+        Announcement announcement = Announcement.builder()
+                .id(-1)
+                .build();
+        given(announcementService.getById(any(Integer.class))).willReturn(announcement);
+        mockMvc.perform(
+                get("/api/announcement/{id}",10))
+                .andExpect(status().isNotFound());
+        verify(announcementService).getById(10);
     }
 }

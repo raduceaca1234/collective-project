@@ -25,6 +25,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementRepository.findAll();
     }
 
+    @Override
+    public Announcement getById(int id) {
+        return announcementRepository.findById(id).orElse(Announcement.builder().id(-1).build());
+    }
+
     @Autowired
     public void setAnnouncementRepository(AnnouncementRepository announcementRepository) {
         this.announcementRepository = announcementRepository;
