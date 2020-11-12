@@ -8,6 +8,6 @@ import ro.ubb.model.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByEmailAndPassword(String email, String password);
 
-    @Query("select u.id from User u where u.email = :email and u.password = :password")
-    Integer getIdOfUserWithCredentials(@Param("email") String email, @Param("password") String password);
+    @Query("select u from User u where u.email = :email and u.password = :password")
+    User getUserWithCredentials(@Param("email") String email, @Param("password") String password);
 }

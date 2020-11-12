@@ -1,5 +1,7 @@
 package ro.ubb.controller;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,10 +13,13 @@ import ro.ubb.dto.CredentialsDto;
 import ro.ubb.dto.LoginDataDto;
 import ro.ubb.dto.RegisterDto;
 import ro.ubb.model.User;
+import ro.ubb.security.JWTUtil;
 import ro.ubb.service.UserService;
-import ro.ubb.validator.UserValidator;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,16 +32,33 @@ class UserControllerTest {
   @Autowired private MockMvc mvc;
   @MockBean private UserService userService;
   @MockBean private DtoConverter dtoConverter;
-
+  @MockBean private JWTUtil jwtUtil;
 
   @Test
   public void loginUser_userExists() throws Exception {
-    User user = User.builder().email("some@valid.email").password("password").build();
-    LoginDataDto loginDataDto = LoginDataDto.builder().id(1).build();
+    User user =
+        User.builder()
+            .id(1)
+            .firstName("first")
+            .lastName("last")
+            .email("some@valid.email")
+            .password("password")
+            .build();
+    LoginDataDto loginDataDto =
+        LoginDataDto.builder()
+            .token("token")
+            .firstName("first")
+            .lastName("last")
+            .email("some@valid.email")
+            .build();
+    Claims claims = new DefaultClaims();
+    claims.setId("1");
+    given(jwtUtil.createJWT(anyInt(), anyLong())).willReturn("token");
+    given(jwtUtil.decodeJWT(anyString())).willReturn(claims);
     given(dtoConverter.convertCredentialsDto(any(CredentialsDto.class))).willReturn(user);
-    given(dtoConverter.convertSuccessfulLogin(any(Integer.class))).willReturn(loginDataDto);
+    given(dtoConverter.convertSuccessfulLogin(any(User.class))).willReturn(loginDataDto);
     given(userService.validUserCredentials(any(User.class))).willReturn(true);
-    given(userService.login(any(User.class))).willReturn(1);
+    given(userService.login(any(User.class))).willReturn(user);
     mvc.perform(
             post("/api/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -47,13 +69,16 @@ class UserControllerTest {
                         + "}"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.id").value(1));
+        .andExpect(jsonPath("$.token").value("token"))
+        .andExpect(jsonPath("$.firstName").value("first"))
+        .andExpect(jsonPath("$.lastName").value("last"))
+        .andExpect(jsonPath("$.email").value("some@valid.email"));
     verify(userService).login(user);
     verify(userService).validUserCredentials(user);
     verify(dtoConverter)
         .convertCredentialsDto(
             CredentialsDto.builder().email("some@valid.email").password("password").build());
-    verify(dtoConverter).convertSuccessfulLogin(1);
+    verify(dtoConverter).convertSuccessfulLogin(user);
   }
 
   @Test
@@ -75,30 +100,40 @@ class UserControllerTest {
         .convertCredentialsDto(
             CredentialsDto.builder().email("some@invalid.email").password("NOT FOUND").build());
   }
+
   @Test
   public void registerUser_successful() throws Exception {
-    User user = User.builder().firstName("Ana").lastName("Gloria")
-            .email("some@valid.email").password("Password!123")
-            .phoneNumber("0723232323").build();
+    User user =
+        User.builder()
+            .firstName("Ana")
+            .lastName("Gloria")
+            .email("some@valid.email")
+            .password("Password!123")
+            .phoneNumber("0723232323")
+            .build();
     given(dtoConverter.convertRegisterDto(any(RegisterDto.class))).willReturn(user);
     given(userService.register(any(User.class))).willReturn(true);
     mvc.perform(
             post("/api/user/register")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                            "{\n"
-                                    + "    \"firstName\": \"Ana\",\n"
-                                    + "    \"lastName\": \"Gloria\",\n"
-                                    + "    \"email\": \"some@valid.email\",\n"
-                                    + "    \"password\": \"Password!123\",\n"
-                                    + "    \"phoneNumber\": \"0723232323\"\n"
-                                    + "}"))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    "{\n"
+                        + "    \"firstName\": \"Ana\",\n"
+                        + "    \"lastName\": \"Gloria\",\n"
+                        + "    \"email\": \"some@valid.email\",\n"
+                        + "    \"password\": \"Password!123\",\n"
+                        + "    \"phoneNumber\": \"0723232323\"\n"
+                        + "}"))
+        .andExpect(status().isOk());
     verify(userService).register(user);
     verify(dtoConverter)
-            .convertRegisterDto(
-                    RegisterDto.builder().firstName("Ana").lastName("Gloria")
-                            .email("some@valid.email").password("Password!123")
-                            .phoneNumber("0723232323").build());
+        .convertRegisterDto(
+            RegisterDto.builder()
+                .firstName("Ana")
+                .lastName("Gloria")
+                .email("some@valid.email")
+                .password("Password!123")
+                .phoneNumber("0723232323")
+                .build());
   }
 }
