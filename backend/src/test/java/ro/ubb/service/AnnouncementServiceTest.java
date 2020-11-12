@@ -10,8 +10,8 @@ import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Status;
 import ro.ubb.repository.AnnouncementRepository;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class AnnouncementServiceTest {
@@ -21,7 +21,7 @@ public class AnnouncementServiceTest {
 
     @BeforeEach
     void setUp() {
-        announcementRepository = mock(AnnouncementRepository.class);
+        initMocks(this);
     }
 
     @Test

@@ -9,8 +9,8 @@ import ro.ubb.repository.UserRepository;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserServiceTest {
 
@@ -19,7 +19,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(UserRepository.class);
+        initMocks(this);
     }
 
     @Test
