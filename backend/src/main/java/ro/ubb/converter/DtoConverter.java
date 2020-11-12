@@ -2,6 +2,7 @@ package ro.ubb.converter;
 
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.dto.AnnouncementDto;
@@ -10,6 +11,7 @@ import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Status;
+import ro.ubb.security.JWTUtil;
 
 import java.io.*;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class DtoConverter {
+  private JWTUtil jwtUtil;
+
   public User convertCredentialsDto(ro.ubb.dto.CredentialsDto credentialsDto) {
     log.debug(
         "converting credentialsDto = {} to an User POJO with email", credentialsDto.getEmail());
@@ -56,20 +60,20 @@ public class DtoConverter {
             .build();
   }
 
-    public AnnouncementDto convertAnnouncementWithoutImages(Announcement announcement) {
-      log.debug("converting announcement pojo ={} to an announcement dto", announcement);
-      return AnnouncementDto.builder()
-              .id(announcement.getId())
-              .ownerId(announcement.getUser().getId())
-              .name(announcement.getName())
-              .description(announcement.getDescription())
-              .location(announcement.getLocation())
-              .category(String.valueOf(announcement.getCategory()))
-              .status(String.valueOf(announcement.getStatus()))
-              .duration(announcement.getDuration())
-              .pricePerDay(announcement.getPricePerDay())
-              .build();
-    }
+  public AnnouncementDto convertAnnouncementWithoutImages(Announcement announcement) {
+    log.debug("converting announcement pojo ={} to an announcement dto", announcement);
+    return AnnouncementDto.builder()
+            .id(announcement.getId())
+            .ownerId(announcement.getUser().getId())
+            .name(announcement.getName())
+            .description(announcement.getDescription())
+            .location(announcement.getLocation())
+            .category(String.valueOf(announcement.getCategory()))
+            .status(String.valueOf(announcement.getStatus()))
+            .duration(announcement.getDuration())
+            .pricePerDay(announcement.getPricePerDay())
+            .build();
+  }
 
   public AnnouncementDto convertAnnouncementWithImages(Announcement announcement, List<Byte[]> imageBytes) {
     AnnouncementDto dto = AnnouncementDto.builder()
@@ -128,4 +132,10 @@ public class DtoConverter {
     }).collect(Collectors.toList()));
     return dto;
   }
+
+  @Autowired
+  public void setJwtUtil(JWTUtil jwtUtil) {
+    this.jwtUtil = jwtUtil;
+  }
+
 }
