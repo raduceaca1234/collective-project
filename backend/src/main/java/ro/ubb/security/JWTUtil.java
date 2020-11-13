@@ -14,6 +14,9 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
+
+  public static final long DEFAULT_VALIDITY = 86400000; //24hrs
+
   private final String SECRET_KEY;
 
   public JWTUtil(@Value("${security.secretKey}") String secretKey) {

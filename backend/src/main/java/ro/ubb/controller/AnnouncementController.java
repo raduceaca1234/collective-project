@@ -5,18 +5,19 @@ import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
-import ro.ubb.service.*;
+import ro.ubb.security.JWTUtil;
+import ro.ubb.service.AnnouncementService;
+import ro.ubb.service.ImageService;
+import ro.ubb.service.UserService;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/announcement")
@@ -27,12 +28,13 @@ public class AnnouncementController {
     private ImageService imageService;
     private DtoConverter dtoConverter;
     private UserService userService;
+    private JWTUtil jwtUtil;
 
     @PostMapping
     ResponseEntity<?> postAnnouncement(@ModelAttribute AnnouncementDto announcementDto){
         Announcement announcementToAdd = dtoConverter.convertAnnouncementDtoForPosting(announcementDto);
-
-        if (!userService.existsById(announcementDto.getOwnerId())){
+        int ownerId = Integer.parseInt(jwtUtil.decodeJWT(announcementDto.getOwnerId()).getId());
+        if (!userService.existsById(ownerId)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -58,6 +60,21 @@ public class AnnouncementController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping(value = "/{id}")
+    ResponseEntity<?> getAnnouncementDetailsById(@PathVariable Integer id){
+        log.info("calling announcementService getById...");
+        Announcement announcement = announcementService.getById(id);
+        log.info("announcementService getById call done, announcement={}...", announcement);
+        if (announcement.getId()==-1){
+            log.error("no announcement with id={}",id);
+            return ResponseEntity.notFound().build();
+        }
+        log.info("fetching image bytes for announcement={}..",announcement);
+        List<Byte[]> imageBytes = imageService.getBytesForAnnouncement(id);
+        log.info("image bytes fetching complete..");
+        return ResponseEntity.ok(dtoConverter.convertAnnouncementWithImages(announcement, imageBytes));
+    }
+
     @Autowired
     public void setAnnouncementService(AnnouncementService announcementService) {
         this.announcementService = announcementService;
@@ -76,5 +93,10 @@ public class AnnouncementController {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setJwtUtil(JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 }
