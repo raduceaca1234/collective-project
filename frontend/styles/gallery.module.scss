@@ -1,0 +1,90 @@
+.gallery{
+    width: 100%;
+
+    margin-left: 100px;
+
+
+    .bigPhotoDiv {
+
+        position: relative;
+
+        .controller{
+
+            width: 100%;
+            position: absolute;
+            display: flex;
+            opacity: 0.2;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: auto;
+
+            .control{
+                width: 60px;
+                height: 60px;
+                background-color: #151A25;
+                margin: 12px;
+
+                p{
+                    color: white;
+                    text-align: center;
+                    font-family: Verdana, Geneva, Tahoma, sans-serif;
+                    padding-top: 5px;
+                }
+            }
+        }
+
+        &:hover{
+            .controller{
+                display: flex;
+                opacity: 1;
+            }
+        }
+
+        .bigPhoto{
+            width: 100%;
+            height: 500px;
+        }
+
+        &.noPhotos{
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .littlePhotosDiv{
+        flex-direction: row;
+        display: flex;
+        overflow-x: scroll;
+        margin-top: 10px;
+
+        .wrap{
+
+            display: flex;
+            flex-direction: row;
+
+            .frame{
+                margin-right: 14px;
+                width : 300px;
+                height: 200px;
+                background-color: white;
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+
+                &.active{
+                    border : 2px solid red;
+                }
+
+                &:hover{
+                    cursor: pointer;
+                }
+    
+                img{
+                    width: 100%;
+                    background-position: center;
+                    background-size: cover;
+                }
+            }
+        }
+    }
+}

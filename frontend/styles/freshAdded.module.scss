@@ -1,0 +1,44 @@
+.freshAdded{
+    background-color: #F8F8F8;
+    margin-top: 80px;
+    
+    h1{
+        margin: 0px;
+        padding: 0px;
+        margin-left: 10%;
+    }
+
+    p {
+        margin-top: 12px;
+        padding: 0px;
+        margin-left: 10%;
+    }
+
+    .carousel{
+        margin-left: 10%;
+        margin-right: 10%;
+        flex-direction: row;
+        display: flex;
+        overflow: auto;
+    }
+
+    .button{
+
+        height:100px ;
+        margin-top: 35px;
+
+        button{
+            color: #DCDCDC;
+            background-color: #222222;
+            margin-left: 50%;
+            font-size: 17px;
+            border-radius: 30px;
+            height: 45px;
+            width: 180px;
+            
+        }
+        
+    }
+
+
+}
