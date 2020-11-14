@@ -1,6 +1,11 @@
 .freshAdded{
     background-color: #F8F8F8;
     margin-top: 80px;
+    margin-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    justify-content: center;
     
     h1{
         margin: 0px;
@@ -20,17 +25,39 @@
         flex-direction: row;
         display: flex;
         overflow: auto;
+
+        &::-webkit-scrollbar {
+            height: 5px;
+        }
+          
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+          
+        &::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 6px;
+        
+            &:hover {
+                background: #555;
+            }
+        }
     }
 
     .button{
 
-        height:100px ;
+        width: 100%;
         margin-top: 35px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
 
         button{
-            color: #DCDCDC;
+            outline: 0 none;
+            border: 0 none;
+            color: #FFFFFF;
             background-color: #222222;
-            margin-left: 50%;
             font-size: 17px;
             border-radius: 30px;
             height: 45px;
