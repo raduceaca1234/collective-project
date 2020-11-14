@@ -3,7 +3,7 @@ import styles from '../styles/footer.module.scss'
 const Footer = () =>{
     return (
         <div className={styles.footer}>
-            <div className="grid" style={{color:'white'}}>
+            <div className={"grid" + ' ' + styles.sitemap} style={{color:'white'}}>
                 <div className="col-6" style={{backgroundColor:'black'}}>
                     <h1>App</h1>
                     <h3>We're your friends too!!</h3>
@@ -12,7 +12,7 @@ const Footer = () =>{
                     <h2>Legal</h2>
                     <p>How it works</p>
                     <p>Privacy Policy</p>
-                    <p>Terms & Conditions</p>
+                    <p>Terms &amp; Conditions</p>
                     <p>Insurance</p>
                 </div>
                 <div className="col-2" style={{backgroundColor:'black'}}>
@@ -31,7 +31,7 @@ const Footer = () =>{
                 </div>
             </div>
             <div className={styles.final}>
-             2020 App name. Made with scheme mari by Romaneasca
+                <p>2020 App name. Made with scheme mari by Romaneasca</p>
             </div>
         </div>
     )

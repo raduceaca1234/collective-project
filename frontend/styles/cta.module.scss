@@ -1,9 +1,7 @@
 .main_div {
     display: flex;
     flex-direction: row;
-    margin-top: 5%;
     height: 500px;
-    margin-bottom: 5%;
 
     .left_div {
         .image{
@@ -56,7 +54,7 @@
                 text-decoration: none;
                 font-size: 15px;
                 margin-right:15px;
-                border-radius: 15px;
+                border-radius: 25px;
             }
 
             .howItWorksButton {
