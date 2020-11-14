@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer login(User user) {
-        return userRepository.getIdOfUserWithCredentials(user.getEmail(), user.getPassword());
+    public User login(User user) {
+        return userRepository.getUserWithCredentials(user.getEmail(), user.getPassword());
     }
     @Override
     public boolean existsById(int userId) {

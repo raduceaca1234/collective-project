@@ -28,12 +28,14 @@ public class UserRepositoryTest {
 
     @Test
     public void getIdOfUserWithCredentials_userExists(){
-        Assertions.assertEquals(1, userRepository.getIdOfUserWithCredentials("user_email1", "user_pass1"));
+        Assertions.assertEquals(1, userRepository.getUserWithCredentials("user_email1", "user_pass1").getId());
+        Assertions.assertEquals("user_email1", userRepository.getUserWithCredentials("user_email1", "user_pass1").getEmail());
+
     }
 
     @Test
     public void getIdOfUserWithCredentials_userDoesNotExist(){
-        Assertions.assertNull(userRepository.getIdOfUserWithCredentials("NOT EXISTING", "NOT EXISTING"));
+        Assertions.assertNull(userRepository.getUserWithCredentials("NOT EXISTING", "NOT EXISTING"));
     }
 
 

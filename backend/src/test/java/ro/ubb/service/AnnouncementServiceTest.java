@@ -1,26 +1,28 @@
 package ro.ubb.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.mockito.Mock;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Status;
+import ro.ubb.repository.AnnouncementRepository;
 
-@ContextConfiguration(classes = ServiceTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
-@DataJpaTest
-@ActiveProfiles("test")
-@Sql({"/schema.sql", "/data.sql"})
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+
 public class AnnouncementServiceTest {
 
-    @Autowired
-    private AnnouncementService announcementService;
+    @Mock
+    AnnouncementRepository announcementRepository;
+
+    @BeforeEach
+    void setUp() {
+        initMocks(this);
+    }
 
     @Test
     public void testAddAnnouncement(){
@@ -33,10 +35,10 @@ public class AnnouncementServiceTest {
                 .category(Category.AGRICULTURE)
                 .status(Status.OPEN)
                 .build();
-        Announcement afterAdding = announcementService.add(added);
-        Assertions.assertEquals(added.getName(), announcementService.getAll().get(2).getName());
-        Assertions.assertEquals(afterAdding.getCategory(), Category.AGRICULTURE);
-        Assertions.assertEquals(announcementService.getAll().size(),3);
+        Announcement afterAdding = added;
+        afterAdding.setId(1);
+        when(announcementRepository.save(added)).thenReturn(afterAdding);
+        Assertions.assertEquals(announcementRepository.save(added).getId(),1);
     }
 
 }
