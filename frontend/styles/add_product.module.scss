@@ -1,27 +1,152 @@
 .content {
-    margin-left: 100px;
+    padding: 80px 15%;
+
+    h1 {
+        margin: 0px;
+    }
 }
 
 .main_div {
     display: flex;
     flex-direction: row;
 
+    .inputsForm {
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+
+        .formGroup {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+
+            label {
+                font-size: 12px;
+                color: #818181;
+                margin: 0px 10px 5px;
+            }
+
+            &:last-child {
+                margin: 0px;
+            }
+
+            input {
+                width: 100%;
+
+                &[type="text"] {
+                    border: 1px solid #cbcbcb;
+                    border-radius: 5px;
+                    padding: 8px;
+                    background-color: #f8f8f8;
+                }
+
+                &[type="number"] {
+                    border: 1px solid #cbcbcb;
+                    border-radius: 5px;
+                    padding: 8px;
+                    background-color: #f8f8f8;
+                }
+            }
+        }
+    }
+
     .title {
         color: #818181;
         font-weight: 400;
         font-size: 12px;
         padding-left: 20px;
-    }
-
-    input[type="text"] {
-        border: none;
-        border-bottom: 2px solid #818181;
-        background-color: #f8f8f8;
-    }
-
-    input[type="number"] {
-        border: none;
-        border-bottom: 2px solid #818181;
-        background-color: #f8f8f8;
+        margin: 0px;
     }
 }
+
+.dragArea {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .addPhotos {
+        background-color: #FFFFFF;
+        width: 100%;
+        height: 200px;
+        border: 1px dashed #CBCBCB;
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        color: #FFFFFF;
+    
+        &::-webkit-file-upload-button {
+            color: white;
+            display: inline-block;
+            background: #1CB6E0;
+            border: none;
+            padding: 7px 15px;
+            font-weight: 700;
+            border-radius: 3px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 10pt;
+        }
+    }
+
+    p {
+        position: absolute;
+        top: 80px;
+        color: #cbcbcb;
+    }
+}
+
+.fileList {
+    list-style-type: none;
+    padding: 10px;
+    margin: 20px 0px 0px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+
+    li {
+        padding: 10px 15px;
+        border: 1px solid #CBCBCB;
+        margin: 0px 0px 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        
+        &:last-child {
+            margin: 0px;
+        }
+
+        .left {
+            display: flex;
+            flex-direction: row;
+
+            .preview {
+                width: 100px;
+                height: 50px;
+                overflow: hidden;
+                margin-right: 20px;
+    
+                img {
+                    width: 100%;
+                    height: 100%;
+                    background-size: cover;
+                }
+            }
+        }
+
+        .right {
+
+            button {
+                background-color: #222222;
+                padding: 10px 15px;
+                color: #FFFFFF;
+                border-radius: 10px;
+                outline: 0 none;
+                border: 0 none;
+                cursor: pointer;
+            }
+        }
+
+    }
+}
+
