@@ -1,30 +1,42 @@
 package ro.ubb.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.mockito.Mock;
+import ro.ubb.model.User;
+import ro.ubb.repository.UserRepository;
 
-@ContextConfiguration(classes = ServiceTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
-@DataJpaTest
-@ActiveProfiles("test")
-@Sql({"/schema.sql", "/data.sql"})
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 public class UserServiceTest {
 
-    @Autowired
-    private UserService userService;
+    @Mock
+    UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        initMocks(this);
+    }
 
     @Test
     public void testUserExistsById_exists(){
-        Assertions.assertTrue(userService.existsById(1));
+        when(userRepository.findById(1))
+                .thenReturn(Optional.of(User.builder()
+                        .id(1)
+                        .firstName("fname1")
+                        .lastName("lname1")
+                        .build()
+                ));
+        Assertions.assertEquals(userRepository.findById(1).get().getId(),1);
     }
 
     @Test
     public void testUserExistsById_nonExists(){
-        Assertions.assertFalse(userService.existsById(-1));
+        when(userRepository.findById(-1)).thenReturn(Optional.empty());
+        Assertions.assertTrue(userRepository.findById(-1).isEmpty());
     }
 }

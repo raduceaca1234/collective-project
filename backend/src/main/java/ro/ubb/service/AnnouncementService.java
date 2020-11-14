@@ -7,4 +7,6 @@ import java.util.List;
 public interface AnnouncementService {
     Announcement add(Announcement announcement);
     List<Announcement> getAll();
+
+    Announcement getById(int id);
 }

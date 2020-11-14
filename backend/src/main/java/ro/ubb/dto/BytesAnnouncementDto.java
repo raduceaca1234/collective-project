@@ -1,7 +1,6 @@
 package ro.ubb.dto;
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -12,10 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AnnouncementDto {
+public class BytesAnnouncementDto {
     @EqualsAndHashCode.Include
     private int id;
-    @NotNull private String ownerId;
+    @NotNull
+    private String ownerId;
     @NotNull private String name;
     @NotNull private String description;
     @NotNull private String location;
@@ -23,5 +23,5 @@ public class AnnouncementDto {
     private String status;
     @NotNull private int duration;
     @NotNull private int pricePerDay;
-    private List<MultipartFile> images;
+    private List<Byte[]> imageBytes;
 }
