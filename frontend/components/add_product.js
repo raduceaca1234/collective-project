@@ -5,7 +5,7 @@ import styles from '../styles/add_product.module.scss'
 const fileToDataUri = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (event) => {
-      resolve(event.target.result)
+        resolve(event.target.result)
     };
     reader.readAsDataURL(file);
 })
@@ -29,16 +29,16 @@ const FileList = (props) => {
     return (
         <ul className={styles.fileList}>
             {props.photos.map((e, i) => (
-            <li key={i}>
-                <div className={styles.left}>
-                    <Preview promise={e.blobPromise} />
-                    <p>{e.name}</p>
-                </div>
+                <li key={i}>
+                    <div className={styles.left}>
+                        <Preview promise={e.blobPromise} />
+                        <p>{e.name}</p>
+                    </div>
 
-                <div className={styles.right}>
-                    <button onClick={() => props.onRemove(i)}>Remove</button>
-                </div>
-            </li>))}
+                    <div className={styles.right}>
+                        <button onClick={() => props.onRemove(i)}>Remove</button>
+                    </div>
+                </li>))}
         </ul>
     )
 }
@@ -87,46 +87,55 @@ const AddProduct = () => {
                                 <label>Product Name</label>
                                 <input type="text"></input>
                             </div>
-                            
+
                             <div className={styles.formGroup}>
                                 <label>Product Location</label>
                                 <input type="text"></input>
                             </div>
-                            
+
                             <div className={styles.formGroup}>
                                 <label>Product Description</label>
                                 <input type="text"></input>
                             </div>
-                            
+
                             <div className={styles.formGroup}>
                                 <label>Product Category</label>
                                 <input type="text"></input>
                             </div>
-                            
+
                             <div className={styles.formGroup}>
                                 <label>Product Availability</label>
                                 <input type="text"></input>
                             </div>
-                            
+
                             <div className={styles.formGroup}>
                                 <label>Product Price per day</label>
                                 <input type="number"></input>
                             </div>
                         </div>
                         <div>
-                            
+
                         </div>
                     </div>
                 </div>
 
                 <div className="col-6">
                     <div className={styles.dragArea}>
-                        <input className={styles.addPhotos} onChange={addPhotos} type="file" name="files" multiple accept="image/png, image/jpeg"/>
+                        <input className={styles.addPhotos} onChange={addPhotos} type="file" name="files" multiple accept="image/png, image/jpeg" />
                         <p>Drag &amp; Drop some photos.</p>
                     </div>
-                    
-                    <FileList photos={photos} onRemove={removePhoto}/>
+
+                    <FileList photos={photos} onRemove={removePhoto} />
+                    {/* <div className={styles.buttons}>
+                        <button className={styles.inventoryButton} onClick={() => { }}>Add Product</button>
+                    </div> */}
+
                 </div>
+
+
+            </div>
+            <div className={styles.buttons}>
+                <button className={styles.addButton} onClick={() => { }}>Add Product</button>
             </div>
         </div>
     )

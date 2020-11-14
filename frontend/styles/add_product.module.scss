@@ -64,21 +64,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     .addPhotos {
-        background-color: #FFFFFF;
+        background-color: #ffffff;
         width: 100%;
         height: 200px;
-        border: 1px dashed #CBCBCB;
+        border: 1px dashed #cbcbcb;
         border-radius: 10px;
         padding: 15px;
         display: flex;
-        color: #FFFFFF;
-    
+        color: #ffffff;
+
         &::-webkit-file-upload-button {
             color: white;
             display: inline-block;
-            background: #1CB6E0;
+            background: #1cb6e0;
             border: none;
             padding: 7px 15px;
             font-weight: 700;
@@ -100,18 +100,18 @@
     list-style-type: none;
     padding: 10px;
     margin: 20px 0px 0px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     border-radius: 10px;
 
     li {
         padding: 10px 15px;
-        border: 1px solid #CBCBCB;
+        border: 1px solid #cbcbcb;
         margin: 0px 0px 5px;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        
+
         &:last-child {
             margin: 0px;
         }
@@ -125,7 +125,7 @@
                 height: 50px;
                 overflow: hidden;
                 margin-right: 20px;
-    
+
                 img {
                     width: 100%;
                     height: 100%;
@@ -135,18 +135,46 @@
         }
 
         .right {
-
             button {
                 background-color: #222222;
                 padding: 10px 15px;
-                color: #FFFFFF;
+                color: #ffffff;
                 border-radius: 10px;
                 outline: 0 none;
                 border: 0 none;
                 cursor: pointer;
             }
         }
-
     }
 }
 
+.buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    margin-top: 100px;
+    margin-left: 450px;
+
+    .addButton {
+        background-color: #000000;
+        border: 0 none;
+        color: white;
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-right: 20px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        margin-right: 15px;
+        border-radius: 25px;
+        outline: 0 none;
+        height: 45px;
+        width: 180px;
+
+        &:hover {
+            background-color: #222;
+        }
+    }
+}
