@@ -3,7 +3,7 @@ import styles from '../styles/Home.module.scss'
 
 const Index = () => {
   return (
-    <div className="grid">
+    <div className={"grid pagesContainer " + styles.container}>
       <div className={"col-6" + ' ' + styles.rediv}>
         col6
       </div>

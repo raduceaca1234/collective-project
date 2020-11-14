@@ -11,7 +11,6 @@ function MyApp({ Component, pageProps }) {
     <div>
       <Navbar />
       <Component {...pageProps} />
-      
     </div>
   )
 

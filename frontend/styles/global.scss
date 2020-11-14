@@ -49,6 +49,10 @@ body {
     .col-12 { grid-column: span 12; }
 }
 
+.pagesContainer {
+    padding-top: 44px;
+}
+
 @media (max-width: 768px) {
     .grid {
       grid-template-columns: repeat(1, 1fr);
