@@ -10,4 +10,6 @@ public interface AnnouncementService {
     Announcement add(Announcement announcement);
     List<Announcement> getAll();
     Page<Announcement> getAllPaged(Pageable pageable);
+
+    Announcement getById(int id);
 }

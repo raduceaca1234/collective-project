@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.mockito.Mock;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
@@ -21,12 +22,24 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import ro.ubb.repository.AnnouncementRepository;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+
 public class AnnouncementServiceTest {
 
+    @Mock
+    AnnouncementRepository announcementRepository;
+
+    @BeforeEach
+    void setUp() {
+        initMocks(this);
+    }
     @Mock
     AnnouncementRepository announcementRepository;
 
@@ -73,10 +86,10 @@ public class AnnouncementServiceTest {
                 .category(Category.AGRICULTURE)
                 .status(Status.OPEN)
                 .build();
-        Announcement afterAdding = announcementService.add(added);
-        Assertions.assertEquals(added.getName(), announcementService.getAll().get(2).getName());
-        Assertions.assertEquals(afterAdding.getCategory(), Category.AGRICULTURE);
-        Assertions.assertEquals(announcementService.getAll().size(),3);
+        Announcement afterAdding = added;
+        afterAdding.setId(1);
+        when(announcementRepository.save(added)).thenReturn(afterAdding);
+        Assertions.assertEquals(announcementRepository.save(added).getId(),1);
     }
 
 }

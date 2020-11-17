@@ -10,4 +10,6 @@ public interface ImageService {
     List<Image> getImages();
 
     List<Image> getImagesForAnnouncement(int announcementId);
+
+    List<Byte[]> getBytesForAnnouncement(int id);
 }

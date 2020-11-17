@@ -14,8 +14,8 @@ const Header = () => {
     }
 
     return (
-        <div className={styles.main_div}>
-            <div className={styles.right_div}>
+        <div className={'grid' + ' ' + styles.main_div}>
+            <div className={'col-6' + ' ' + styles.right_div}>
                 <div className={styles.container}>
                     <div className={styles.title}>
                         <h1>Ask us instead of them!</h1>
@@ -29,7 +29,7 @@ const Header = () => {
                     <button className={styles.readMoreButton}>Read more</button>
                 </div>
             </div>
-            <div className={styles.left_div}>
+            <div className={'col-6' + ' ' + styles.left_div}>
                 <img src="/headerImage.png" alt="Header Image" />
             </div>
         </div>

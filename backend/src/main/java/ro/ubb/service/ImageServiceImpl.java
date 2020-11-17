@@ -31,6 +31,12 @@ public class ImageServiceImpl implements ImageService{
         return imageRepository.findAll().stream().filter(i -> i.getAnnouncement().getId() == announcementId).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Byte[]> getBytesForAnnouncement(int id) {
+        return imageRepository.getImageBytesForAnnouncement(id);
+    }
+
+
     @Autowired
     public void setImageRepository(ImageRepository imageRepository) {
         this.imageRepository = imageRepository;
