@@ -63,6 +63,7 @@ public class DtoConverter {
 
   public PagedAnnouncementDto convertAnnouncementForGetPaginated(Announcement announcement) {
     log.debug("converting announcement={}", announcement);
+    long validityTimeMillis = 1000 * 600;
     return PagedAnnouncementDto.builder()
             .id(announcement.getId())
             .name(announcement.getName())
@@ -73,7 +74,7 @@ public class DtoConverter {
             .duration(announcement.getDuration())
             .status(announcement.getStatus().toString())
             .pricePerDay(announcement.getPricePerDay())
-            .ownerId(announcement.getUser().getId())
+            .ownerId(this.jwtUtil.createJWT(announcement.getUser().getId(), validityTimeMillis))
             .order(1)
             .build();
   }

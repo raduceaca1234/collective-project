@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PagedAnnouncementDto {
     @EqualsAndHashCode.Include
     private int id;
@@ -22,8 +23,8 @@ public class PagedAnnouncementDto {
     @NotNull private int duration;
     private String status;
     @NotNull private int pricePerDay;
-    @NotNull private int ownerId;
+    @NotNull private String ownerId;
     @NonNull private int pageNumber;
     @NotNull private int order;
-    private MultipartFile thumbnail;
+    private byte[] thumbnail;
 }

@@ -1,16 +1,16 @@
 package ro.ubb.controller;
 
-import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.dto.PagedAnnouncementDto;
@@ -26,13 +26,14 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AnnouncementController.class)
@@ -66,40 +67,39 @@ public class AnnouncementControllerTest {
                 new Announcement(11, User.builder().id(4).build(), "announcement11", "description11", "location11", new Date(System.currentTimeMillis() - 1800000), Category.TECH, 480, Status.OPEN, 55, new HashSet<>(), new HashSet<>(), new HashSet<>())
         );
         List<PagedAnnouncementDto> announcementDtos = Arrays.asList(
-                new PagedAnnouncementDto(1, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 1, 1, null),
-                new PagedAnnouncementDto(2, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 1, 1, null),
-                new PagedAnnouncementDto(3, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 1, 1, null),
-                new PagedAnnouncementDto(4, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 1, 1,null),
-                new PagedAnnouncementDto(5, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 1, 1, null),
-                new PagedAnnouncementDto(6, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 2, 1, null),
-                new PagedAnnouncementDto(7, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 2, 1, null),
-                new PagedAnnouncementDto(8, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 2, 1, null),
-                new PagedAnnouncementDto(9, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 2, 1, null),
-                new PagedAnnouncementDto(10, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 2, 1, null),
-                new PagedAnnouncementDto(11, "announcement1", "description1", "location1", "", "", 120, "open", 25, 1, 3, 1, null)
+                new PagedAnnouncementDto(1, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
+                new PagedAnnouncementDto(2, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
+                new PagedAnnouncementDto(3, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
+                new PagedAnnouncementDto(4, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1,null),
+                new PagedAnnouncementDto(5, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
+                new PagedAnnouncementDto(6, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
+                new PagedAnnouncementDto(7, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
+                new PagedAnnouncementDto(8, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
+                new PagedAnnouncementDto(9, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
+                new PagedAnnouncementDto(10, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
+                new PagedAnnouncementDto(11, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 3, 1, null)
                 );
 
+        Pageable pageable1 = PageRequest.of(0, 5);
+        Pageable pageable2 = PageRequest.of(1, 5);
+        Pageable pageable3 = PageRequest.of(2, 5);
         given(announcementService.getAll()).willReturn(announcements);
+        given(announcementService.getAllPaged(pageable1)).willReturn(new PageImpl<>(announcements.subList(0, 5)));
+        given(announcementService.getAllPaged(pageable2)).willReturn(new PageImpl<>(announcements.subList(5, 10)));
+        given(announcementService.getAllPaged(pageable3)).willReturn(new PageImpl<>(announcements.subList(10, 11)));
         IntStream.range(0, announcements.size()).forEach(i -> given(dtoConverter.convertAnnouncementForGetPaginated(announcements.get(i))).willReturn(announcementDtos.get(i)));
 
-        String result =
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/announcement"))
+        String result = mockMvc.perform(
+                get("/api/announcement")
+                        .param("pageNo", String.valueOf(1))
+                        .param("PageSize", String.valueOf(5)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        verify(announcementService).getAll();
-        verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(0));
+        verify(announcementService).getAllPaged(any(Pageable.class));
         verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(5));
-        verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(10));
-        String announcement1 = "{\"id\":1,\"name\":\"announcement1\",\"description\":\"description1\",\"location\":\"location1\",\"category\":\"\",\"createdDate\":\"\",\"duration\":120,\"status\":\"open\",\"pricePerDay\":25,\"ownerId\":1,\"pageNumber\":1,\"order\":1,\"thumbnail\":null}";
-        String announcement5 = "{\"id\":5,\"name\":\"announcement1\",\"description\":\"description1\",\"location\":\"location1\",\"category\":\"\",\"createdDate\":\"\",\"duration\":120,\"status\":\"open\",\"pricePerDay\":25,\"ownerId\":1,\"pageNumber\":1,\"order\":1,\"thumbnail\":null}";
-        String announcement10 = "{\"id\":10,\"name\":\"announcement1\",\"description\":\"description1\",\"location\":\"location1\",\"category\":\"\",\"createdDate\":\"\",\"duration\":120,\"status\":\"open\",\"pricePerDay\":25,\"ownerId\":1,\"pageNumber\":2,\"order\":1,\"thumbnail\":null}";
-        String announcement11 = "{\"id\":11,\"name\":\"announcement1\",\"description\":\"description1\",\"location\":\"location1\",\"category\":\"\",\"createdDate\":\"\",\"duration\":120,\"status\":\"open\",\"pricePerDay\":25,\"ownerId\":1,\"pageNumber\":3,\"order\":1,\"thumbnail\":null}";
-        Assertions.assertTrue(result.contains(announcement1));
-        Assertions.assertTrue(result.contains(announcement5));
-        Assertions.assertTrue(result.contains(announcement10));
-        Assertions.assertTrue(result.contains(announcement11));
+        verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(9));
     }
 
     @Test

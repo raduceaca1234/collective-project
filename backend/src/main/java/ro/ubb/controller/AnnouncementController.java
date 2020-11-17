@@ -3,14 +3,18 @@ package ro.ubb.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.dto.PagedAnnouncementDto;
+import ro.ubb.dto.PagingDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
 import ro.ubb.service.AnnouncementService;
@@ -32,34 +36,27 @@ public class AnnouncementController {
     private UserService userService;
 
     @GetMapping
-    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncements() {
-        int announcementsPerPage = 5;
+    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncements(@ModelAttribute PagingDto pagingDto) {
+        int pageNo = pagingDto.getPageNo();
+        int pageSize = pagingDto.getPageSize();
+        pageNo = 1;
+        pageSize = 5;
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         log.info("calling announcementService get...");
-        List<Announcement> allAnnouncements = announcementService.getAll();
+        Page<Announcement> announcementsPage = announcementService.getAllPaged(pageable);
         log.info("announcementService get finished...");
 
         List<PagedAnnouncementDto> pagedAnnouncementDtos = new ArrayList<>();
-        int page = 1;
-        int posOnPage = 0;
-        for (Announcement a : allAnnouncements) {
+        for (Announcement a : announcementsPage) {
             PagedAnnouncementDto pad = dtoConverter.convertAnnouncementForGetPaginated(a);
-            pad.setPageNumber(page);
+            pad.setPageNumber(pageNo);
             log.info("calling imageService get...");
-            imageService.getImages().stream()
-                    .filter(i -> i.getAnnouncement() == a)
+            imageService.getImagesForAnnouncement(a.getId()).stream()
                     .findFirst()
-                    .ifPresent(i -> pad.setThumbnail(
-                            new MockMultipartFile("thumbnail", ArrayUtils.toPrimitive(i.getImageBytes()))
-                    ));
+                    .ifPresent(i -> pad.setThumbnail(ArrayUtils.toPrimitive(i.getImageBytes())));
             log.info("imageService get finished...");
             pagedAnnouncementDtos.add(pad);
-
-            posOnPage++;
-            if (posOnPage >= announcementsPerPage){
-                page++;
-                posOnPage = 0;
-            }
         }
         return ResponseEntity.ok(pagedAnnouncementDtos);
     }

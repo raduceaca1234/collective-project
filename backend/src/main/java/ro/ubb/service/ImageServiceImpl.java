@@ -7,6 +7,7 @@ import ro.ubb.model.Image;
 import ro.ubb.repository.ImageRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +24,11 @@ public class ImageServiceImpl implements ImageService{
     @Override
     public List<Image> getImages() {
         return imageRepository.findAll();
+    }
+
+    @Override
+    public List<Image> getImagesForAnnouncement(int announcementId) {
+        return imageRepository.findAll().stream().filter(i -> i.getAnnouncement().getId() == announcementId).collect(Collectors.toList());
     }
 
     @Autowired
