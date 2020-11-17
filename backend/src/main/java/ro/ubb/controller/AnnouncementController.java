@@ -36,15 +36,16 @@ public class AnnouncementController {
     private UserService userService;
     private JWTUtil jwtUtil;
 
-    @GetMapping
-    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncements(@ModelAttribute PagingDto pagingDto) {
-        int pageNo = pagingDto.getPageNo();
-        int pageSize = pagingDto.getPageSize();
+    @GetMapping(value="/{pageNo}/{pageSize}")
+    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncements(@PathVariable Integer pageNo, @PathVariable Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
+        log.info("pageNo = {}", pageNo);
+        log.info("pageSize = {}", pageSize);
         log.info("calling announcementService get...");
         Page<Announcement> announcementsPage = announcementService.getAllPaged(pageable);
         log.info("announcementService get finished...");
+        log.info("page = {}", announcementsPage);
 
         List<PagedAnnouncementDto> pagedAnnouncementDtos = new ArrayList<>();
         for (Announcement a : announcementsPage) {
