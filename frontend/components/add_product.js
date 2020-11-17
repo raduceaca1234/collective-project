@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { Alert } from 'react'
 
 import styles from '../styles/add_product.module.scss'
 
@@ -45,6 +47,10 @@ const FileList = (props) => {
 
 const AddProduct = () => {
     const [photos, setPhotos] = useState([])
+    const [name, setName] = useState()
+    const [files, setFiles] = useState([])
+    const ref = useRef()
+    const router = useRouter()
 
     const addPhotos = (event) => {
         let newPhotos = Array.from(event.target.files)
@@ -63,10 +69,35 @@ const AddProduct = () => {
         })
 
         setPhotos([...photos, ...newMembers])
+        event.target.files && setFiles([...files, ...event.target.files])
     }
 
     const removePhoto = (index) => {
         setPhotos(photos.splice(index, 1))
+    }
+
+    const sendDataToServer = () => {
+        let data = new FormData(ref.current)
+        data.append("ownerId", "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxIiwiaWF0IjoxNjA1NjQxOTYxLCJleHAiOjE2MDU3MjgzNjF9.MXsI9mlu_AX2IJo4UI4NTYlm83a2wuO6ip0YYkYiBvU")
+        // data.append("name", "obj1")
+        // data.append("description", "t1")
+        // data.append("location", "cluj")
+        // data.append("category", "SPORT")
+        // data.append("duration", 10)
+        // data.append("pricePerDay", 50)
+        files.length > 0 && files.forEach(file => data.append("images", file))
+        
+        fetch('http://localhost:8080/api/announcement', {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: {
+                // 'Content-Type': 'multipart/form-data'
+            },
+            body: data
+        }).then(response => {
+            alert('Announcement was added')
+            router.push('/')
+        });
     }
 
     React.useEffect(() => {
@@ -82,37 +113,37 @@ const AddProduct = () => {
             <div className="grid">
                 <div className="col-6">
                     <div className={styles.main_div}>
-                        <div className={styles.inputsForm}>
+                        <form ref={ref} className={styles.inputsForm}>
                             <div className={styles.formGroup}>
                                 <label>Product Name</label>
-                                <input type="text"></input>
+                                <input name="name" type="text"></input>
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label>Product Location</label>
-                                <input type="text"></input>
+                                <input name="description" type="text"></input>
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label>Product Description</label>
-                                <input type="text"></input>
+                                <input name="location" type="text"></input>
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label>Product Category</label>
-                                <input type="text"></input>
+                                <input name="category" type="text"></input>
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label>Product Availability</label>
-                                <input type="text"></input>
+                                <input name="duration" type="text"></input>
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label>Product Price per day</label>
-                                <input type="number"></input>
+                                <input name="pricePerDay" type="number"></input>
                             </div>
-                        </div>
+                        </form>
                         <div>
 
                         </div>
@@ -131,11 +162,9 @@ const AddProduct = () => {
                     </div> */}
 
                 </div>
-
-
             </div>
             <div className={styles.buttons}>
-                <button className={styles.addButton} onClick={() => { }}>Add Product</button>
+                <button className={styles.addButton} onClick={() => sendDataToServer()}>Add Product</button>
             </div>
         </div>
     )

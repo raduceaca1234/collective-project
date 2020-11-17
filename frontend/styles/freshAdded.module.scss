@@ -1,5 +1,5 @@
 .freshAdded{
-    background-color: #F8F8F8;
+    background-color: #FFFFFF;
     margin-top: 80px;
     margin-bottom: 80px;
     display: flex;
@@ -25,6 +25,10 @@
         flex-direction: row;
         display: flex;
         overflow: auto;
+
+        >img{
+            transform: scale(0.5);    
+        }
 
         &::-webkit-scrollbar {
             height: 5px;

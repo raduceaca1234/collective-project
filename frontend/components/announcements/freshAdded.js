@@ -9,7 +9,7 @@ const FreshAdded = (props) => {
 
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/announcement/1/5')
+        fetch('http://localhost:8080/api/announcement/1/10')
             .then(response => {
                 console.log(response)
                 response.json().then(
@@ -32,6 +32,7 @@ const FreshAdded = (props) => {
             </div>
 
             <div className={styles.carousel}>
+                {list.length===0 && <img src="loader.gif"/>}
                 {list.map(item => {
                     return (
                         <Card
