@@ -9,23 +9,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.mockito.Mock;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Status;
 import ro.ubb.repository.AnnouncementRepository;
 
-import java.sql.Array;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import ro.ubb.repository.AnnouncementRepository;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -33,13 +27,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class AnnouncementServiceTest {
 
-    @Mock
-    AnnouncementRepository announcementRepository;
-
-    @BeforeEach
-    void setUp() {
-        initMocks(this);
-    }
     @Mock
     AnnouncementRepository announcementRepository;
 

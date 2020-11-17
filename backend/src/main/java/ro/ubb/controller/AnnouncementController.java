@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,9 +16,6 @@ import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.dto.PagingDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
-import ro.ubb.service.AnnouncementService;
-import ro.ubb.service.ImageService;
-import ro.ubb.service.UserService;
 import ro.ubb.security.JWTUtil;
 import ro.ubb.service.AnnouncementService;
 import ro.ubb.service.ImageService;
@@ -27,7 +23,6 @@ import ro.ubb.service.UserService;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.List;
 
 @RestController
@@ -45,8 +40,6 @@ public class AnnouncementController {
     ResponseEntity<List<PagedAnnouncementDto>> getAnnouncements(@ModelAttribute PagingDto pagingDto) {
         int pageNo = pagingDto.getPageNo();
         int pageSize = pagingDto.getPageSize();
-        pageNo = 1;
-        pageSize = 5;
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         log.info("calling announcementService get...");
