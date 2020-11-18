@@ -1,6 +1,5 @@
 package ro.ubb.controller;
 
-import org.junit.jupiter.api.Assertions;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Test;
@@ -12,11 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
-import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.dto.BytesAnnouncementDto;
+import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.User;
 import ro.ubb.model.enums.Category;
@@ -26,10 +24,8 @@ import ro.ubb.service.AnnouncementService;
 import ro.ubb.service.ImageService;
 import ro.ubb.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -40,10 +36,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AnnouncementController.class)
 public class AnnouncementControllerTest {
@@ -99,9 +93,7 @@ public class AnnouncementControllerTest {
         IntStream.range(0, announcements.size()).forEach(i -> given(dtoConverter.convertAnnouncementForGetPaginated(announcements.get(i))).willReturn(announcementDtos.get(i)));
 
         String result = mockMvc.perform(
-                get("/api/announcement")
-                        .param("pageNo", String.valueOf(1))
-                        .param("PageSize", String.valueOf(5)))
+                get("/api/announcement/1/5"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();

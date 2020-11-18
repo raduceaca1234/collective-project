@@ -1,4 +1,8 @@
+import Link from 'next/Link'
+
 import styles from '../../styles/cta.module.scss'
+
+
 
 const Cta = ()=>{
     return (
@@ -18,7 +22,7 @@ const Cta = ()=>{
                     </div>
                 </div>
                 <div className={styles.buttons}>
-                    <button className={styles.postObjectButton} onClick={()=>{}}>Post an object</button>
+                    <Link href="/add" ><a className={styles.postObjectButton}>Post an object</a></Link>
                     <button className={styles.howItWorksButton}>How it works</button>
                 </div>
             </div>
