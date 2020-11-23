@@ -111,7 +111,7 @@ public class AnnouncementController {
         Byte[] bytes = imageService.getThumbnailForAnnouncement(id);
         log.info("thumbnail fetching complete..");
         if (bytes==null){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
         dto.setThumbnail(bytes);
         return ResponseEntity.ok(dto);
