@@ -17,7 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <docker.image.prefix>goodssharingapi</docker.image.prefix>
         <sql.server.version>7.2.2.jre11</sql.server.version>
         <swagger.version>2.9.2</swagger.version>
         <lombok.version>1.18.16</lombok.version>
@@ -109,6 +108,10 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.test.version}</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -121,7 +124,7 @@
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>${dockerfile.version}</version>
                 <configuration>
-                    <repository>${docker.image.prefix}/${project.name}</repository>
+                    <repository>${project.name}</repository>
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
