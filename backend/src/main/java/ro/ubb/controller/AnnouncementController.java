@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.dto.PagedAnnouncementDto;
-import ro.ubb.dto.PagingDto;
+import ro.ubb.dto.ThumbnailDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
 import ro.ubb.security.JWTUtil;
@@ -51,11 +51,6 @@ public class AnnouncementController {
         for (Announcement a : announcementsPage) {
             PagedAnnouncementDto pad = dtoConverter.convertAnnouncementForGetPaginated(a);
             pad.setPageNumber(pageNo);
-            log.info("calling imageService get...");
-            imageService.getImagesForAnnouncement(a.getId()).stream()
-                    .findFirst()
-                    .ifPresent(i -> pad.setThumbnail(ArrayUtils.toPrimitive(i.getImageBytes())));
-            log.info("imageService get finished...");
             pagedAnnouncementDtos.add(pad);
         }
         return ResponseEntity.ok(pagedAnnouncementDtos);
@@ -104,6 +99,22 @@ public class AnnouncementController {
         List<Byte[]> imageBytes = imageService.getBytesForAnnouncement(id);
         log.info("image bytes fetching complete..");
         return ResponseEntity.ok(dtoConverter.convertAnnouncementWithImages(announcement, imageBytes));
+    }
+
+    @GetMapping(value="/thumbnail/{id}")
+    ResponseEntity<?> getThumbnail(@PathVariable Integer id){
+        if (!announcementService.existsById(id)){
+            return ResponseEntity.notFound().build();
+        }
+        ThumbnailDto dto = ThumbnailDto.builder().id(id).build();
+        log.info("fetching thumbnail image bytes for announcement with id={}..",id);
+        Byte[] bytes = imageService.getThumbnailForAnnouncement(id);
+        log.info("thumbnail fetching complete..");
+        if (bytes==null){
+            return ResponseEntity.notFound().build();
+        }
+        dto.setThumbnail(bytes);
+        return ResponseEntity.ok(dto);
     }
 
     @Autowired
