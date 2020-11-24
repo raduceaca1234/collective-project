@@ -12,4 +12,6 @@ public interface ImageService {
     List<Image> getImagesForAnnouncement(int announcementId);
 
     List<Byte[]> getBytesForAnnouncement(int id);
+
+    Byte[] getThumbnailForAnnouncement(int id);
 }

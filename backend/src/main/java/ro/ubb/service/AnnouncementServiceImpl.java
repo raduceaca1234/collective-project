@@ -41,6 +41,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementRepository.findById(id).orElse(Announcement.builder().id(-1).build());
     }
 
+    @Override
+    public boolean existsById(int id) {
+        return announcementRepository.existsById(id);
+    }
+
     @Autowired
     public void setAnnouncementRepository(AnnouncementRepository announcementRepository) {
         this.announcementRepository = announcementRepository;

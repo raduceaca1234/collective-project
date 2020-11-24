@@ -36,6 +36,11 @@ public class ImageServiceImpl implements ImageService{
         return imageRepository.getImageBytesForAnnouncement(id);
     }
 
+    @Override
+    public Byte[] getThumbnailForAnnouncement(int id) {
+        return imageRepository.getThumbnailForAnnouncement(id);
+    }
+
 
     @Autowired
     public void setImageRepository(ImageRepository imageRepository) {

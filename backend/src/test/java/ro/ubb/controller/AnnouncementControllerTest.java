@@ -2,6 +2,7 @@ package ro.ubb.controller;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
+import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.dto.BytesAnnouncementDto;
@@ -53,6 +55,8 @@ public class AnnouncementControllerTest {
     private UserService userService;
     @MockBean
     private DtoConverter dtoConverter;
+    @MockBean
+    private JWTUtil jwtUtil;
 
     @Test
     public void testGetAnnouncementsPaginated() throws Exception {
@@ -70,17 +74,17 @@ public class AnnouncementControllerTest {
                 new Announcement(11, User.builder().id(4).build(), "announcement11", "description11", "location11", new Date(System.currentTimeMillis() - 1800000), Category.TECH, 480, Status.OPEN, 55, new HashSet<>(), new HashSet<>(), new HashSet<>())
         );
         List<PagedAnnouncementDto> announcementDtos = Arrays.asList(
-                new PagedAnnouncementDto(1, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
-                new PagedAnnouncementDto(2, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
-                new PagedAnnouncementDto(3, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
-                new PagedAnnouncementDto(4, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1,null),
-                new PagedAnnouncementDto(5, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1, null),
-                new PagedAnnouncementDto(6, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
-                new PagedAnnouncementDto(7, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
-                new PagedAnnouncementDto(8, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
-                new PagedAnnouncementDto(9, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
-                new PagedAnnouncementDto(10, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1, null),
-                new PagedAnnouncementDto(11, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 3, 1, null)
+                new PagedAnnouncementDto(1, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1),
+                new PagedAnnouncementDto(2, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1),
+                new PagedAnnouncementDto(3, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1),
+                new PagedAnnouncementDto(4, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1),
+                new PagedAnnouncementDto(5, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 1, 1),
+                new PagedAnnouncementDto(6, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1),
+                new PagedAnnouncementDto(7, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1),
+                new PagedAnnouncementDto(8, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1),
+                new PagedAnnouncementDto(9, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1),
+                new PagedAnnouncementDto(10, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 2, 1),
+                new PagedAnnouncementDto(11, "announcement1", "description1", "location1", "", "", 120, "open", 25, "1", 3, 1)
                 );
 
         Pageable pageable1 = PageRequest.of(0, 5);
@@ -102,8 +106,6 @@ public class AnnouncementControllerTest {
         verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(5));
         verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(9));
     }
-    @MockBean
-    private JWTUtil jwtUtil;
 
     @Test
     public void testPostAnnouncement_userExists() throws Exception {
@@ -246,5 +248,25 @@ public class AnnouncementControllerTest {
                 get("/api/announcement/{id}",10))
                 .andExpect(status().isNotFound());
         verify(announcementService).getById(10);
+    }
+
+    @Test
+    public void testGetThumbnailForId_Exists() throws Exception {
+        given(imageService.getThumbnailForAnnouncement(any(Integer.class))).willReturn(ArrayUtils.toObject("img".getBytes()));
+        ResultActions actions = mockMvc.perform(
+                get("/api/announcement/thumbnail/{id}",1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE))
+                .andExpect(content().bytes(new byte[]{105,109,103}));
+        verify(imageService).getThumbnailForAnnouncement(1);
+    }
+
+    @Test
+    public void testGetThumbnailForId_DoesntExist() throws Exception {
+        given(imageService.getThumbnailForAnnouncement(any(Integer.class))).willReturn(null);
+        mockMvc.perform(
+                get("/api/announcement/thumbnail/{id}",-1))
+                .andExpect(status().isNotFound());
+        verify(imageService).getThumbnailForAnnouncement(-1);
     }
 }

@@ -12,4 +12,6 @@ public interface AnnouncementService {
     Page<Announcement> getAllPaged(Pageable pageable);
 
     Announcement getById(int id);
+
+    boolean existsById(int id);
 }
