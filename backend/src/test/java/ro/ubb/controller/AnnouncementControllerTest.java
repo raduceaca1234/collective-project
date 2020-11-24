@@ -252,24 +252,21 @@ public class AnnouncementControllerTest {
 
     @Test
     public void testGetThumbnailForId_Exists() throws Exception {
-        given(announcementService.existsById(any(Integer.class))).willReturn(Boolean.TRUE);
         given(imageService.getThumbnailForAnnouncement(any(Integer.class))).willReturn(ArrayUtils.toObject("img".getBytes()));
         ResultActions actions = mockMvc.perform(
                 get("/api/announcement/thumbnail/{id}",1))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.thumbnail").exists());
-        verify(announcementService).existsById(1);
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE))
+                .andExpect(content().bytes(new byte[]{105,109,103}));
         verify(imageService).getThumbnailForAnnouncement(1);
     }
 
     @Test
     public void testGetThumbnailForId_DoesntExist() throws Exception {
-        given(announcementService.existsById(any(Integer.class))).willReturn(Boolean.FALSE);
+        given(imageService.getThumbnailForAnnouncement(any(Integer.class))).willReturn(null);
         mockMvc.perform(
                 get("/api/announcement/thumbnail/{id}",-1))
                 .andExpect(status().isNotFound());
-        verify(announcementService).existsById(-1);
+        verify(imageService).getThumbnailForAnnouncement(-1);
     }
 }

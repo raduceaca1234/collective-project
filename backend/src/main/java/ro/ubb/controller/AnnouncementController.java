@@ -7,13 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.AnnouncementDto;
 import ro.ubb.dto.PagedAnnouncementDto;
-import ro.ubb.dto.ThumbnailDto;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Image;
 import ro.ubb.security.JWTUtil;
@@ -103,18 +103,15 @@ public class AnnouncementController {
 
     @GetMapping(value="/thumbnail/{id}")
     ResponseEntity<?> getThumbnail(@PathVariable Integer id){
-        if (!announcementService.existsById(id)){
-            return ResponseEntity.notFound().build();
-        }
-        ThumbnailDto dto = ThumbnailDto.builder().id(id).build();
         log.info("fetching thumbnail image bytes for announcement with id={}..",id);
         Byte[] bytes = imageService.getThumbnailForAnnouncement(id);
         log.info("thumbnail fetching complete..");
         if (bytes==null){
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
-        dto.setThumbnail(bytes);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
+                .body(ArrayUtils.toPrimitive(bytes));
     }
 
     @Autowired
