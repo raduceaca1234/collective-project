@@ -6,37 +6,40 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import ro.ubb.model.User;
 import ro.ubb.repository.UserRepository;
+import ro.ubb.validator.UserValidator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class UserServiceTest {
+class UserServiceTest {
 
-    @Mock
-    UserRepository userRepository;
+  @Mock UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        initMocks(this);
-    }
+  @Mock UserValidator userValidator;
 
-    @Test
-    public void testUserExistsById_exists(){
-        when(userRepository.findById(1))
-                .thenReturn(Optional.of(User.builder()
-                        .id(1)
-                        .firstName("fname1")
-                        .lastName("lname1")
-                        .build()
-                ));
-        Assertions.assertEquals(userRepository.findById(1).get().getId(),1);
-    }
+  private UserServiceImpl userService;
 
-    @Test
-    public void testUserExistsById_nonExists(){
-        when(userRepository.findById(-1)).thenReturn(Optional.empty());
-        Assertions.assertTrue(userRepository.findById(-1).isEmpty());
-    }
+  @BeforeEach
+  void setUp() {
+    initMocks(this);
+    userService = new UserServiceImpl();
+    userService.setUserRepository(userRepository);
+    userService.setUserValidator(userValidator);
+  }
+
+  @Test
+  void testUserExistsById_exists() {
+    when(userRepository.existsById(1)).thenReturn(true);
+    Assertions.assertTrue(userService.existsById(1));
+  }
+
+  @Test
+  void testUserExistsById_nonExists() {
+    when(userRepository.existsById(-1)).thenReturn(false);
+    Assertions.assertFalse(userService.existsById(-1));
+  }
 }
