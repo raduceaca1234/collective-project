@@ -3,6 +3,7 @@ package ro.ubb.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @ToString
@@ -40,4 +41,9 @@ public class Wishlist {
             foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
             inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private Set<Announcement> wantedAnnouncements;
+
+    public Wishlist(User user) {
+        this.owner = user;
+        this.wantedAnnouncements = new HashSet<>();
+    }
 }
