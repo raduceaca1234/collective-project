@@ -16,7 +16,6 @@ import ro.ubb.model.enums.Order;
 import ro.ubb.model.enums.Status;
 import ro.ubb.security.JWTUtil;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -126,54 +125,54 @@ public class DtoConverter {
   }
 
   private String getField(OrderingAndFilteringDto orderingAndFilteringDto) {
-    if (orderingAndFilteringDto.getOrderingDto() != null
-        && orderingAndFilteringDto.getOrderingDto().getField() != null) {
-      return orderingAndFilteringDto.getOrderingDto().getField();
+    if (orderingAndFilteringDto.getOrdering() != null
+        && orderingAndFilteringDto.getOrdering().getField() != null) {
+      return orderingAndFilteringDto.getOrdering().getField();
     } else {
       return null;
     }
   }
 
   private Integer getMinDays(OrderingAndFilteringDto orderingAndFilteringDto) {
-    if (orderingAndFilteringDto.getDurationFilteringDto() != null
-        && orderingAndFilteringDto.getDurationFilteringDto().getMinDays() != null) {
-      return orderingAndFilteringDto.getDurationFilteringDto().getMinDays();
+    if (orderingAndFilteringDto.getDurationFiltering() != null
+        && orderingAndFilteringDto.getDurationFiltering().getMinDays() != null) {
+      return orderingAndFilteringDto.getDurationFiltering().getMinDays();
     } else {
       return null;
     }
   }
 
   private List<Category> getCategories(OrderingAndFilteringDto orderingAndFilteringDto) {
-    if (orderingAndFilteringDto.getCategoryFilteringDto() != null
-        && orderingAndFilteringDto.getCategoryFilteringDto().getCategories() != null) {
-      return orderingAndFilteringDto.getCategoryFilteringDto().getCategories();
+    if (orderingAndFilteringDto.getCategoryFiltering() != null
+        && orderingAndFilteringDto.getCategoryFiltering().getCategories() != null) {
+      return orderingAndFilteringDto.getCategoryFiltering().getCategories();
     } else {
       return null;
     }
   }
 
   private Integer getMinLimit(OrderingAndFilteringDto orderingAndFilteringDto) {
-    if (orderingAndFilteringDto.getPriceFilteringDto() != null
-        && orderingAndFilteringDto.getPriceFilteringDto().getMinLimit() != null) {
-      return orderingAndFilteringDto.getPriceFilteringDto().getMinLimit();
+    if (orderingAndFilteringDto.getPriceFiltering() != null
+        && orderingAndFilteringDto.getPriceFiltering().getMinLimit() != null) {
+      return orderingAndFilteringDto.getPriceFiltering().getMinLimit();
     } else {
       return null;
     }
   }
 
   private Integer getMaxLimit(OrderingAndFilteringDto orderingAndFilteringDto) {
-    if (orderingAndFilteringDto.getPriceFilteringDto() != null
-        && orderingAndFilteringDto.getPriceFilteringDto().getMaxLimit() != null) {
-      return orderingAndFilteringDto.getPriceFilteringDto().getMaxLimit();
+    if (orderingAndFilteringDto.getPriceFiltering() != null
+        && orderingAndFilteringDto.getPriceFiltering().getMaxLimit() != null) {
+      return orderingAndFilteringDto.getPriceFiltering().getMaxLimit();
     } else {
       return null;
     }
   }
 
   private Order getOrder(OrderingAndFilteringDto orderingAndFilteringDto) {
-    if (orderingAndFilteringDto.getOrderingDto() != null) {
-      return orderingAndFilteringDto.getOrderingDto().getOrder() != null
-          ? orderingAndFilteringDto.getOrderingDto().getOrder()
+    if (orderingAndFilteringDto.getOrdering() != null) {
+      return orderingAndFilteringDto.getOrdering().getOrder() != null
+          ? orderingAndFilteringDto.getOrdering().getOrder()
           : Order.ASC;
     } else {
       return null;

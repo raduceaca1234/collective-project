@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +26,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,8 +33,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 class AnnouncementServiceTest {
 
-  @Mock
-  private AnnouncementRepository announcementRepository;
+  @Mock private AnnouncementRepository announcementRepository;
   private AnnouncementServiceImpl announcementService;
 
   @BeforeEach
@@ -294,5 +291,31 @@ class AnnouncementServiceTest {
             orderingAndFilteringData, PageRequest.of(2, 2));
     assertEquals(1, result.getContent().size());
     assertEquals(5, result.getContent().get(0).getId());
+  }
+
+  @Test
+  void filteringAndOrdering_complex() {
+    OrderingAndFilteringData orderingAndFilteringData =
+        OrderingAndFilteringData.builder().orderingField("name").minimumNumberOfDays(2).build();
+    when(announcementRepository.findAll(any(Sort.class)))
+        .thenReturn(
+            Arrays.asList(
+                Announcement.builder().id(1).name("a").duration(5).build(),
+                Announcement.builder().id(2).name("b").duration(4).build(),
+                Announcement.builder().id(3).name("c").duration(3).build(),
+                Announcement.builder().id(4).name("d").duration(2).build(),
+                Announcement.builder().id(5).name("e").duration(1).build()));
+    Page<Announcement> result =
+        announcementService.getAllOrderedAndFilteredPaged(
+            orderingAndFilteringData, PageRequest.of(0, 2));
+    assertEquals(4, result.getTotalElements());
+    assertEquals(1, result.getContent().get(0).getId());
+    assertEquals(2, result.getContent().get(1).getId());
+
+    result =
+        announcementService.getAllOrderedAndFilteredPaged(
+            orderingAndFilteringData, PageRequest.of(1, 2));
+    assertEquals(3, result.getContent().get(0).getId());
+    assertEquals(4, result.getContent().get(1).getId());
   }
 }
