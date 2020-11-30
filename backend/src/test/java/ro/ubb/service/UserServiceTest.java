@@ -23,7 +23,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUserExistsById_exists(){
+    public void testUserExistsById_exists() {
         when(userRepository.findById(1))
                 .thenReturn(Optional.of(User.builder()
                         .id(1)
@@ -31,11 +31,11 @@ public class UserServiceTest {
                         .lastName("lname1")
                         .build()
                 ));
-        Assertions.assertEquals(userRepository.findById(1).get().getId(),1);
+        Assertions.assertEquals(userRepository.findById(1).get().getId(), 1);
     }
 
     @Test
-    public void testUserExistsById_nonExists(){
+    public void testUserExistsById_nonExists() {
         when(userRepository.findById(-1)).thenReturn(Optional.empty());
         Assertions.assertTrue(userRepository.findById(-1).isEmpty());
     }

@@ -1,8 +1,8 @@
 package ro.ubb.service;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -63,7 +63,7 @@ public class AnnouncementServiceTest {
     }
 
     @Test
-    public void testAddAnnouncement(){
+    public void testAddAnnouncement() {
         Announcement added = Announcement.builder()
                 .user(User.builder().id(1).build())
                 .name("TestName1")
@@ -76,7 +76,7 @@ public class AnnouncementServiceTest {
         Announcement afterAdding = added;
         afterAdding.setId(1);
         when(announcementRepository.save(added)).thenReturn(afterAdding);
-        Assertions.assertEquals(announcementRepository.save(added).getId(),1);
+        Assertions.assertEquals(announcementRepository.save(added).getId(), 1);
     }
 
 }
