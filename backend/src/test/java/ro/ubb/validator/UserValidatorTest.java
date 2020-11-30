@@ -20,7 +20,7 @@ class UserValidatorTest {
 
     @Test
     public void goodPassword(){
-        Assertions.assertTrue(userValidator.validatePassword("Password!123"));
+        Assertions.assertTrue(userValidator.validatePassword("Gloria!123"));
     }
     @Test
     public void badPassword(){
