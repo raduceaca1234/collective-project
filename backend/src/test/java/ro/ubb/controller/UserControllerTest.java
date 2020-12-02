@@ -35,7 +35,7 @@ class UserControllerTest {
   @MockBean private JWTUtil jwtUtil;
 
   @Test
-  public void loginUser_userExists() throws Exception {
+  void loginUser_userExists() throws Exception {
     User user =
         User.builder()
             .id(1)
@@ -82,7 +82,7 @@ class UserControllerTest {
   }
 
   @Test
-  public void loginUser_userDoesNotExist() throws Exception {
+  void loginUser_userDoesNotExist() throws Exception {
     User user = User.builder().email("email@email.email").password("password").build();
     given(dtoConverter.convertCredentialsDto(any(CredentialsDto.class))).willReturn(user);
     given(userService.validUserCredentials(any(User.class))).willReturn(false);
@@ -102,7 +102,7 @@ class UserControllerTest {
   }
 
   @Test
-  public void registerUser_successful() throws Exception {
+  void registerUser_successful() throws Exception {
     User user =
         User.builder()
             .firstName("Ana")
