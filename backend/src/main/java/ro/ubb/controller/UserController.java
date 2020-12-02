@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.CredentialsDto;
 import ro.ubb.dto.RegisterDto;
@@ -42,13 +43,17 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDto registerDto) {
         log.debug("Got register call with email = {}", registerDto.getEmail());
         User user = dtoConverter.convertRegisterDto(registerDto);
-        if (userService.register(user)) {
-            log.debug("User with email = {} successfully singed up", registerDto.getEmail());
-            return new ResponseEntity<>(null, HttpStatus.OK);
-        } else {
-            log.debug("User with email = {} couldn't be created.",
-                    registerDto.getEmail());
-            return ResponseEntity.noContent().build();
+        try {
+            if (userService.register(user)) {
+                log.debug("User with email = {} successfully singed up", registerDto.getEmail());
+                return new ResponseEntity<>(null, HttpStatus.OK);
+            } else {
+                log.debug("User with email = {} couldn't be created.",
+                        registerDto.getEmail());
+                return ResponseEntity.noContent().build();
+            }
+        } catch (HttpServerErrorException e) {
+            return new ResponseEntity(e.getMessage(), e.getStatusCode());
         }
     }
 

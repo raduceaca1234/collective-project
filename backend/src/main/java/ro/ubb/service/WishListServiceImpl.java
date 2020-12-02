@@ -10,7 +10,9 @@ import ro.ubb.model.Wishlist;
 import ro.ubb.repository.WishlistRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -65,6 +67,11 @@ public class WishListServiceImpl implements WishListService {
     public void addItem(int ownerId, int announcementId) {
         Announcement announcement = announcementService.getById(announcementId);
         Wishlist wishlist = getWishListByOwnerId(ownerId);
-        wishlist.getWantedAnnouncements().add(announcement);
+        Set<Announcement> announcementSet = wishlist.getWantedAnnouncements();
+        if (announcementSet == null) {
+            announcementSet = new HashSet<>();
+        }
+        announcementSet.add(announcement);
+        wishlist.setWantedAnnouncements(announcementSet);
     }
 }

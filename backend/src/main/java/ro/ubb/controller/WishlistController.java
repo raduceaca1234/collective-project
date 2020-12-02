@@ -50,7 +50,7 @@ public class WishlistController {
             log.error("Exception encountered-" + e.getMessage());
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
