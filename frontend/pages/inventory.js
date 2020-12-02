@@ -151,6 +151,7 @@ const Inventory = () => {
                             content.map(e => (
                                 <Card
                                     key={e.id}
+                                    img={(process.env.SERVER_API_URL+'/announcement/thumbnail/'+e.id)}//https:// via.placeholder.com/217x305
                                     name={e.name}
                                     category={e.category}
                                     price={e.pricePerDay}
