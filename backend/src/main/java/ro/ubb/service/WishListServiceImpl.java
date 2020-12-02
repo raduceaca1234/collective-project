@@ -5,17 +5,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ro.ubb.model.Announcement;
 import ro.ubb.model.Wishlist;
 import ro.ubb.repository.WishlistRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 public class WishListServiceImpl implements WishListService {
 
     private WishlistRepository wishlistRepository;
+    private AnnouncementService announcementService;
 
     @Override
     public Wishlist add(Wishlist wishlist) {
@@ -47,5 +51,27 @@ public class WishListServiceImpl implements WishListService {
     @Autowired
     public void setWishlistRepository(WishlistRepository wishlistRepository) {
         this.wishlistRepository = wishlistRepository;
+    }
+
+    @Autowired
+    public void setAnnouncementService(AnnouncementService announcementService) {
+        this.announcementService = announcementService;
+    }
+
+    @Override
+    public Wishlist getWishListByOwnerId(int id) {
+        return wishlistRepository.getWishlistByOwnerId(id);
+    }
+
+    @Override
+    public void addItem(int ownerId, int announcementId) {
+        Announcement announcement = announcementService.getById(announcementId);
+        Wishlist wishlist = getWishListByOwnerId(ownerId);
+        Set<Announcement> announcementSet = wishlist.getWantedAnnouncements();
+        if (announcementSet == null) {
+            announcementSet = new HashSet<>();
+        }
+        announcementSet.add(announcement);
+        wishlist.setWantedAnnouncements(announcementSet);
     }
 }
