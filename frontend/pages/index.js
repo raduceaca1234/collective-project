@@ -6,6 +6,7 @@ import Footer from '../components/footer'
 import CTA from '../components/announcements/cta'
 import Fresh from '../components/announcements/freshAdded'
 
+
 const Index = () => {
   return (
     <div>
@@ -13,6 +14,7 @@ const Index = () => {
       <Fresh />
       <CTA />
       <Footer />
+
     </div>
   )
 }

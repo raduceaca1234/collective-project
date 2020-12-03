@@ -1,11 +1,13 @@
 import styles from '../../styles/card.module.scss'
 
+const PLACEHOLDER = 'https://via.placeholder.com/217x305'
+
 const Card = (props) => {
     
     return (
         <div className = {styles.card}>
-            <div className = {styles.image}>
-                <img  src = {props.img}/>
+            <div className={styles.image}>
+                <img src={props.img} onError={(e)=>{e.target.onerror=null; e.target.src=PLACEHOLDER;}}/>
             </div>
 
             <div className = {styles.details}>

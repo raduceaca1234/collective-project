@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import styles from '../../styles/register.module.scss'
 
-const SignUp=()=>{
+import AuthAPI from '../../api/auth'
+
+const SignUp = (props) =>{
     const [formData,setFormData] = useState({})
 
     const updateInput = e =>{
@@ -14,18 +16,52 @@ const SignUp=()=>{
     const handleSubmit = event =>{
         event.preventDefault()
         if(!validateEmail(formData.email)){
-            console.log("Invalid email");
-            alert("That is not a valid email!!");
+            props.onAlert({
+                type: 'error',
+                message: 'Please, enter a valid email address.',
+            })
             return;
         }
-        setFormData({
-            lastName:'',
-            firstName:'',
-            phone_number: '',
-            email:'',
-            password:'',
+
+        let data = {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phoneNumber: formData.phone_number,
+            password: formData.password,
+        }
+
+        console.log(data)
+
+        AuthAPI.signUp(data)
+        .then(res => {
+            if(res.ok) {
+                props.onAlert({
+                    message: `Welcome, ${formData.firstName}, to the game! You may sign in now.`,
+                })
+            } else {
+                props.onAlert({
+                    type: 'error',
+                    message: 'This email address is already being used.',
+                })
+            }
         })
-        console.log(formData) 
+        .catch(err => {
+            props.onAlert({
+                type: 'error',
+                message: 'Something went wrong. Please, try again.',
+            })
+        })
+
+
+        // setFormData({
+        //     lastName:'',
+        //     firstName:'',
+        //     phone_number: '',
+        //     email:'',
+        //     password:'',
+        // })
+        
     }
     const validateEmail=(email)=>{
         /*
@@ -57,7 +93,7 @@ const SignUp=()=>{
 
                 <p className={styles.text}>Phone number</p>
                 <input className={styles.input}
-                type="number"
+                type="text"
                 name="phone_number"
                 onChange={updateInput}
                 value={formData.phone_number}

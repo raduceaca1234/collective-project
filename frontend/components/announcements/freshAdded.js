@@ -9,7 +9,7 @@ const FreshAdded = (props) => {
 
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/announcement/1/10')
+        fetch(process.env.SERVER_API_URL + '/announcement/0/10')
             .then(response => {
                 console.log(response)
                 response.json().then(
@@ -33,10 +33,11 @@ const FreshAdded = (props) => {
 
             <div className={styles.carousel}>
                 {list.length===0 && <img src="loader.gif"/>}
-                {list.map(item => {
+                {list.map((item, key) => {
                     return (
                         <Card
-                            img={item.thumbnail ? "data:image/jpeg;base64,"+item.thumbnail : "https://via.placeholder.com/217x305"}//https:// via.placeholder.com/217x305
+                            key={key}
+                            img={(process.env.SERVER_API_URL+'/announcement/thumbnail/'+item.id)}//https:// via.placeholder.com/217x305
                             name={item.name}
                             category={item.category}
                             price={item.pricePerDay}

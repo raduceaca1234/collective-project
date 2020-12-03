@@ -39,6 +39,29 @@
             font-weight: 600;
             margin-right: 10px;
             margin-top: 2px;
+            cursor: pointer;
+        }
+    }
+
+    ul {
+        &.options {
+            background-color: #FFFFFF;
+            width: 150px;
+            list-style-type: none;
+            padding: 10px;
+            margin: 0px;
+            position: absolute;
+            top: 40px;
+            right: 20px;
+
+            li {
+                margin-bottom: 10px;
+                cursor: pointer;
+
+                &:last-child {
+                    margin: 0px;
+                }
+            }
         }
     }
 }
@@ -52,7 +75,7 @@
         width: 17px;
         height: 17px;
         font-style: normal;
-        padding: 3px 0px;
+        padding: 2px 0px;
         text-align: center;
         background-color: #CBCBCB;
         border-radius: 25px;
@@ -72,7 +95,7 @@
         width: 17px;
         height: 17px;
         font-style: normal;
-        padding: 3px 0px;
+        padding: 2px 0px;
         text-align: center;
         background-color: #CBCBCB;
         border-radius: 25px;
@@ -122,6 +145,22 @@
             padding: 5px 10px;
             border-radius: 15px;
             color: #fff;
+        }
+    }
+}
+
+.auth {
+    a {
+        margin-right: 15px;
+        text-decoration: none;
+        color: #333333;
+
+        &:visited {
+            color: #333333;
+        }
+
+        &:last-child {
+            margin-right: 0px;
         }
     }
 }
