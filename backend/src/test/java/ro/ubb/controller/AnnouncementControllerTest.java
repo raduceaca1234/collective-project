@@ -14,16 +14,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ro.ubb.converter.DtoConverter;
-import ro.ubb.dto.*;
+import ro.ubb.dto.AnnouncementDto;
+import ro.ubb.dto.BytesAnnouncementDto;
+import ro.ubb.dto.OrderingAndFilteringDto;
+import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.model.*;
 import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Order;
 import ro.ubb.model.enums.Status;
 import ro.ubb.security.JWTUtil;
-import ro.ubb.service.AnnouncementService;
-import ro.ubb.service.DiscussionService;
-import ro.ubb.service.ImageService;
-import ro.ubb.service.UserService;
+import ro.ubb.service.*;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ class AnnouncementControllerTest {
   @MockBean private ImageService imageService;
   @MockBean private UserService userService;
   @MockBean private DiscussionService discussionService;
+  @MockBean private LoanService loanService;
   @MockBean private DtoConverter dtoConverter;
   @MockBean private JWTUtil jwtUtil;
 
@@ -523,5 +524,105 @@ class AnnouncementControllerTest {
     verify(userService).getById(3);
     verify(announcementService).getById(2);
     verify(discussionService).add(any(Discussion.class));
+  }
+
+  @Test
+  void testStartDiscussion_notFound() throws Exception {
+    Claims claims = new DefaultClaims();
+    claims.setId("3");
+    given(jwtUtil.createJWT(any(Integer.class), any(Long.class))).willReturn("token");
+    given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
+    given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
+    given(announcementService.getById(any(Integer.class))).willReturn(null);
+
+    mockMvc.perform(
+            post("/api/announcement/discussion")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
+                    .param("announcementId", "2"))
+            .andExpect(status().isNotFound());
+
+    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(userService).getById(3);
+    verify(announcementService).getById(2);
+    verify(discussionService, never()).add(any(Discussion.class));
+  }
+
+  @Test
+  void testGetDiscussions() throws Exception {
+    given(announcementService.getById(1)).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
+
+    mockMvc.perform(
+            get("/api/announcement/get-discussions/1"))
+            .andExpect(status().isOk());
+
+    verify(announcementService).getById(1);
+    verify(discussionService).getAllByAnnouncement(any(Announcement.class));
+  }
+
+  @Test
+  void testGetDiscussions_notFound() throws Exception {
+    given(announcementService.getById(2)).willReturn(null);
+
+    mockMvc.perform(
+            get("/api/announcement/get-discussions/2"))
+            .andExpect(status().isNotFound());
+
+    verify(announcementService).getById(2);
+    verify(discussionService, never()).getAllByAnnouncement(any(Announcement.class));
+  }
+
+  @Test
+  void testLoan() throws Exception {
+    Claims claims = new DefaultClaims();
+    claims.setId("3");
+    given(jwtUtil.createJWT(any(Integer.class), any(Long.class))).willReturn("token");
+    given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
+    given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
+    given(announcementService.getById(any(Integer.class))).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
+    given(discussionService.getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class))).willReturn(Discussion.builder()
+            .discussedAnnouncement(Announcement.builder().id(2).user(User.builder().id(4).build()).build())
+            .interestedUser(User.builder().id(3).build())
+            .build());
+
+    mockMvc.perform(
+            post("/api/announcement/loan")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
+                    .param("announcementId", "2"))
+            .andExpect(status().isOk());
+
+    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(userService).getById(3);
+    verify(announcementService).getById(2);
+    verify(discussionService).getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class));
+    verify(loanService).add(any(Loan.class));
+  }
+
+  @Test
+  void testLoan_notFound() throws Exception {
+    Claims claims = new DefaultClaims();
+    claims.setId("3");
+    given(jwtUtil.createJWT(any(Integer.class), any(Long.class))).willReturn("token");
+    given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
+    given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
+    given(announcementService.getById(any(Integer.class))).willReturn(null);
+    given(discussionService.getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class))).willReturn(Discussion.builder()
+            .discussedAnnouncement(Announcement.builder().id(2).user(User.builder().id(4).build()).build())
+            .interestedUser(User.builder().id(3).build())
+            .build());
+
+    mockMvc.perform(
+            post("/api/announcement/loan")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
+                    .param("announcementId", "2"))
+            .andExpect(status().isNotFound());
+
+    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(userService).getById(3);
+    verify(announcementService).getById(2);
+    verify(discussionService, never()).getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class));
+    verify(loanService, never()).add(any(Loan.class));
   }
 }

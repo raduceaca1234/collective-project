@@ -14,11 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.*;
 import ro.ubb.model.*;
+import ro.ubb.model.enums.Status;
 import ro.ubb.security.JWTUtil;
-import ro.ubb.service.AnnouncementService;
-import ro.ubb.service.DiscussionService;
-import ro.ubb.service.ImageService;
-import ro.ubb.service.UserService;
+import ro.ubb.service.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -33,6 +31,7 @@ public class AnnouncementController {
   private AnnouncementService announcementService;
   private ImageService imageService;
   private DiscussionService discussionService;
+  private LoanService loanService;
   private DtoConverter dtoConverter;
   private UserService userService;
   private JWTUtil jwtUtil;
@@ -144,12 +143,14 @@ public class AnnouncementController {
     log.info("calling userService getById ...");
     User user = userService.getById(interestedUser);
     if (user == null) {
+      log.error("no user with id={}", interestedUser);
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     log.info("userService getById complete");
     log.info("calling announcementService getById ...");
     Announcement announcement = announcementService.getById(announcementId);
     if (announcement == null) {
+      log.error("no announcement with id={}", announcementId);
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     log.info("announcementService getById complete");
@@ -158,6 +159,7 @@ public class AnnouncementController {
             .interestedUser(user)
             .discussedAnnouncement(announcement)
             .build();
+    announcement.setStatus(Status.IN_DISCUSSION);
     log.info("calling discussionService add ...");
     discussionService.add(discussion);
     log.info("discussionService add complete");
@@ -166,6 +168,61 @@ public class AnnouncementController {
             .phoneNumber(announcement.getUser().getPhoneNumber())
             .build();
     return ResponseEntity.ok().body(discussionResponseDto);
+  }
+
+  @GetMapping(value = "/get-discussions/{announcementId}")
+  ResponseEntity<?> getDiscussions(@PathVariable int announcementId) {
+    log.info("userService getById complete");
+    log.info("calling announcementService getById ...");
+    Announcement announcement = announcementService.getById(announcementId);
+    if (announcement == null) {
+      log.error("no announcement with id={}", announcementId);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("announcementService getById complete");
+
+    log.info("calling discussionService getAllByAnnouncement ...");
+    List<Discussion> discussions = discussionService.getAllByAnnouncement(announcement);
+    log.info("discussionService getAllByAnnouncement complete");
+
+    return ResponseEntity.ok().body(discussions.toString());
+  }
+
+  @PostMapping(value = "/loan")
+  ResponseEntity<?> loan(@ModelAttribute LoanDto loanDto) {
+    int interestedUser = Integer.parseInt(jwtUtil.decodeJWT(loanDto.getInterestedTokenUser()).getId());
+    int announcementId = loanDto.getAnnouncementId();
+
+    log.info("calling userService getById ...");
+    User user = userService.getById(interestedUser);
+    if (user == null) {
+      log.error("no user with id={}", interestedUser);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("userService getById complete");
+    log.info("calling announcementService getById ...");
+    Announcement announcement = announcementService.getById(announcementId);
+    if (announcement == null) {
+      log.error("no announcement with id={}", announcementId);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("announcementService getById complete");
+    log.info("calling discussionService getByAnnouncementAndInterestedUser ...");
+    Discussion discussion = discussionService.getByAnnouncementAndInterestedUser(user, announcement);
+    if (discussion == null) {
+      log.error("no discussion with announcement={} and interestedUser={}", announcement, user);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("discussionService getByAnnouncementAndInterestedUser complete");
+
+    Loan loan = Loan.builder()
+            .discussion(discussion)
+            .build();
+    announcement.setStatus(Status.LOANED);
+    log.info("calling discussionService add ...");
+    loanService.add(loan);
+    log.info("discussionService add complete");
+    return ResponseEntity.ok().build();
   }
 
   @Autowired
@@ -181,6 +238,11 @@ public class AnnouncementController {
   @Autowired
   public void setDiscussionService(DiscussionService discussionService) {
     this.discussionService = discussionService;
+  }
+
+  @Autowired
+  public void setLoanService(LoanService loanService) {
+    this.loanService = loanService;
   }
 
   @Autowired
