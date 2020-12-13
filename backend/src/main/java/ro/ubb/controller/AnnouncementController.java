@@ -9,23 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ubb.converter.DtoConverter;
-import ro.ubb.dto.AnnouncementDto;
-import ro.ubb.dto.OrderingAndFilteringDto;
-import ro.ubb.dto.PagedAnnouncementDto;
-import ro.ubb.model.Announcement;
-import ro.ubb.model.Image;
-import ro.ubb.model.OrderingAndFilteringData;
+import ro.ubb.dto.*;
+import ro.ubb.model.*;
 import ro.ubb.security.JWTUtil;
 import ro.ubb.service.AnnouncementService;
+import ro.ubb.service.DiscussionService;
 import ro.ubb.service.ImageService;
 import ro.ubb.service.UserService;
 
@@ -41,6 +32,7 @@ public class AnnouncementController {
 
   private AnnouncementService announcementService;
   private ImageService imageService;
+  private DiscussionService discussionService;
   private DtoConverter dtoConverter;
   private UserService userService;
   private JWTUtil jwtUtil;
@@ -144,6 +136,38 @@ public class AnnouncementController {
         .body(ArrayUtils.toPrimitive(bytes));
   }
 
+  @PostMapping(value = "/discussion")
+  ResponseEntity<?> startDiscussion(@ModelAttribute LoanDto loanDto) {
+    int interestedUser = Integer.parseInt(jwtUtil.decodeJWT(loanDto.getInterestedTokenUser()).getId());
+    int announcementId = loanDto.getAnnouncementId();
+
+    log.info("calling userService getById ...");
+    User user = userService.getById(interestedUser);
+    if (user == null) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    log.info("userService getById complete");
+    log.info("calling announcementService getById ...");
+    Announcement announcement = announcementService.getById(announcementId);
+    if (announcement == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("announcementService getById complete");
+
+    Discussion discussion = Discussion.builder()
+            .interestedUser(user)
+            .discussedAnnouncement(announcement)
+            .build();
+    log.info("calling discussionService add ...");
+    discussionService.add(discussion);
+    log.info("discussionService add complete");
+    DiscussionResponseDto discussionResponseDto = DiscussionResponseDto.builder()
+            .email(announcement.getUser().getEmail())
+            .phoneNumber(announcement.getUser().getPhoneNumber())
+            .build();
+    return ResponseEntity.ok().body(discussionResponseDto);
+  }
+
   @Autowired
   public void setAnnouncementService(AnnouncementService announcementService) {
     this.announcementService = announcementService;
@@ -152,6 +176,11 @@ public class AnnouncementController {
   @Autowired
   public void setImageService(ImageService imageService) {
     this.imageService = imageService;
+  }
+
+  @Autowired
+  public void setDiscussionService(DiscussionService discussionService) {
+    this.discussionService = discussionService;
   }
 
   @Autowired

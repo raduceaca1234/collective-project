@@ -10,6 +10,8 @@ import ro.ubb.model.Wishlist;
 import ro.ubb.repository.UserRepository;
 import ro.ubb.validator.UserValidator;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -30,6 +32,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsById(int userId) {
         return userRepository.existsById(userId);
+    }
+
+    @Override
+    public User getById(int userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Override
