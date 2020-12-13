@@ -14,18 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ro.ubb.converter.DtoConverter;
-import ro.ubb.dto.AnnouncementDto;
-import ro.ubb.dto.BytesAnnouncementDto;
-import ro.ubb.dto.OrderingAndFilteringDto;
-import ro.ubb.dto.PagedAnnouncementDto;
-import ro.ubb.model.Announcement;
-import ro.ubb.model.OrderingAndFilteringData;
-import ro.ubb.model.User;
+import ro.ubb.dto.*;
+import ro.ubb.model.*;
 import ro.ubb.model.enums.Category;
 import ro.ubb.model.enums.Order;
 import ro.ubb.model.enums.Status;
 import ro.ubb.security.JWTUtil;
 import ro.ubb.service.AnnouncementService;
+import ro.ubb.service.DiscussionService;
 import ro.ubb.service.ImageService;
 import ro.ubb.service.UserService;
 
@@ -39,15 +35,11 @@ import java.util.stream.IntStream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AnnouncementController.class)
 class AnnouncementControllerTest {
@@ -57,6 +49,7 @@ class AnnouncementControllerTest {
   @MockBean private AnnouncementService announcementService;
   @MockBean private ImageService imageService;
   @MockBean private UserService userService;
+  @MockBean private DiscussionService discussionService;
   @MockBean private DtoConverter dtoConverter;
   @MockBean private JWTUtil jwtUtil;
 
@@ -508,5 +501,27 @@ class AnnouncementControllerTest {
     verify(announcementService)
         .getAllOrderedAndFilteredPaged(eq(orderingAndFilteringData), eq(PageRequest.of(0, 2)));
     verify(dtoConverter, times(2)).convertAnnouncementForGetPaginated(any(Announcement.class));
+  }
+
+  @Test
+  void testStartDiscussion() throws Exception {
+    Claims claims = new DefaultClaims();
+    claims.setId("3");
+    given(jwtUtil.createJWT(any(Integer.class), any(Long.class))).willReturn("token");
+    given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
+    given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
+    given(announcementService.getById(any(Integer.class))).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
+
+    mockMvc.perform(
+            post("/api/announcement/discussion")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
+                    .param("announcementId", "2"))
+            .andExpect(status().isOk());
+
+    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(userService).getById(3);
+    verify(announcementService).getById(2);
+    verify(discussionService).add(any(Discussion.class));
   }
 }

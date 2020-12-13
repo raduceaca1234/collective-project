@@ -11,4 +11,6 @@ public interface UserService {
     User login(User user);
 
     boolean existsById(int userId);
+
+    User getById(int userId);
 }
