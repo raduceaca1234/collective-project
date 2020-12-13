@@ -32,6 +32,7 @@ public class AnnouncementController {
   private ImageService imageService;
   private DiscussionService discussionService;
   private LoanService loanService;
+  private ClosedLoanService closedLoanService;
   private DtoConverter dtoConverter;
   private UserService userService;
   private JWTUtil jwtUtil;
@@ -225,6 +226,43 @@ public class AnnouncementController {
     return ResponseEntity.ok().build();
   }
 
+  @PostMapping(value = "/closed-loan")
+  ResponseEntity<?> closeLoan(@ModelAttribute LoanDto loanDto) {
+    int interestedUser = Integer.parseInt(jwtUtil.decodeJWT(loanDto.getInterestedTokenUser()).getId());
+    int announcementId = loanDto.getAnnouncementId();
+
+    log.info("calling userService getById ...");
+    User user = userService.getById(interestedUser);
+    if (user == null) {
+      log.error("no user with id={}", interestedUser);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("userService getById complete");
+    log.info("calling announcementService getById ...");
+    Announcement announcement = announcementService.getById(announcementId);
+    if (announcement == null) {
+      log.error("no announcement with id={}", announcementId);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("announcementService getById complete");
+    log.info("calling loanService getByAnnouncementAndInterestedUser ...");
+    Loan loan = loanService.getByAnnouncementAndInterestedUser(user, announcement);
+    if (loan == null) {
+      log.error("no loan with announcement={} and interestedUser={}", announcement, user);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    log.info("loanService getByAnnouncementAndInterestedUser complete");
+
+    ClosedLoan closedLoan = ClosedLoan.builder()
+            .loan(loan)
+            .build();
+    announcement.setStatus(Status.CLOSED);
+    log.info("calling closedLoanService add ...");
+    closedLoanService.add(closedLoan);
+    log.info("closedLoanService add complete");
+    return ResponseEntity.ok().build();
+  }
+
   @Autowired
   public void setAnnouncementService(AnnouncementService announcementService) {
     this.announcementService = announcementService;
@@ -243,6 +281,11 @@ public class AnnouncementController {
   @Autowired
   public void setLoanService(LoanService loanService) {
     this.loanService = loanService;
+  }
+
+  @Autowired
+  public void setClosedLoanService(ClosedLoanService closedLoanService) {
+    this.closedLoanService = closedLoanService;
   }
 
   @Autowired

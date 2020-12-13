@@ -51,6 +51,7 @@ class AnnouncementControllerTest {
   @MockBean private UserService userService;
   @MockBean private DiscussionService discussionService;
   @MockBean private LoanService loanService;
+  @MockBean private ClosedLoanService closedLoanService;
   @MockBean private DtoConverter dtoConverter;
   @MockBean private JWTUtil jwtUtil;
 
@@ -624,5 +625,58 @@ class AnnouncementControllerTest {
     verify(announcementService).getById(2);
     verify(discussionService, never()).getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class));
     verify(loanService, never()).add(any(Loan.class));
+  }
+
+  @Test
+  void testCloseLoan() throws Exception {
+    Claims claims = new DefaultClaims();
+    claims.setId("3");
+    given(jwtUtil.createJWT(any(Integer.class), any(Long.class))).willReturn("token");
+    given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
+    given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
+    given(announcementService.getById(any(Integer.class))).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
+    given(loanService.getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class))).willReturn(Loan.builder().discussion(
+            Discussion.builder()
+                    .discussedAnnouncement(Announcement.builder().id(2).user(User.builder().id(4).build()).build())
+                    .interestedUser(User.builder().id(3).build())
+                    .build()
+    ).build());
+
+    mockMvc.perform(
+            post("/api/announcement/closed-loan")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
+                    .param("announcementId", "2"))
+            .andExpect(status().isOk());
+
+    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(userService).getById(3);
+    verify(announcementService).getById(2);
+    verify(loanService).getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class));
+    verify(closedLoanService).add(any(ClosedLoan.class));
+  }
+
+  @Test
+  void testCloseLoan_notFound() throws Exception {
+    Claims claims = new DefaultClaims();
+    claims.setId("3");
+    given(jwtUtil.createJWT(any(Integer.class), any(Long.class))).willReturn("token");
+    given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
+    given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
+    given(announcementService.getById(any(Integer.class))).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
+    given(loanService.getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class))).willReturn(null);
+
+    mockMvc.perform(
+            post("/api/announcement/closed-loan")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
+                    .param("announcementId", "2"))
+            .andExpect(status().isNotFound());
+
+    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(userService).getById(3);
+    verify(announcementService).getById(2);
+    verify(loanService).getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class));
+    verify(closedLoanService, never()).add(any(ClosedLoan.class));
   }
 }
