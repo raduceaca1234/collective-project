@@ -2,18 +2,20 @@
     padding-left: 20px;
 }
 .main_div{
-    width: 750px;
+    width: 100%;
+    margin: 0px;
     padding-left: 10px;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     padding-bottom: 10px;
     height: 500px;
+    background-color: white;
     
     .new_info{
         display: flex;
         flex-direction: column;
-        background-color: white;
-        width: 350px;
+        width: 48%;
         padding-left: 10px;
         padding-right: 10px;
         .text{
@@ -23,10 +25,12 @@
             
         }
         .input{
+            padding: 10px;
             border-radius: 15px;
             height: 30px;
             border: none;
-            background-color: #F8F8F8; 
+            background-color: #F8F8F8;
+            outline: 0 none;
         }
         .message{
             border-radius: 15px;
@@ -79,7 +83,7 @@
     .contact_info{
         padding-left: 10px;
         background-color: white;
-        width: 390px;
+        width: 48%;
 
         .profile_img{
             width: 125px;
