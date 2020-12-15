@@ -1,5 +1,6 @@
 package ro.ubb.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Loan;
@@ -19,5 +20,10 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public Loan getByAnnouncementAndInterestedUser(User user, Announcement announcement) {
         return loanRepository.getByAnnouncementAndInterestedUser(user.getId(), announcement.getId());
+    }
+
+    @Autowired
+    public void setLoanRepository(LoanRepository loanRepository) {
+        this.loanRepository = loanRepository;
     }
 }

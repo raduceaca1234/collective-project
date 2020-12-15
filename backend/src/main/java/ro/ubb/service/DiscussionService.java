@@ -13,4 +13,6 @@ public interface DiscussionService {
     Discussion getByAnnouncementAndInterestedUser(User user, Announcement announcement);
 
     List<Discussion> getAllByAnnouncement(Announcement announcement);
+
+    List<Discussion> getAllByAnnouncementId(int announcementId);
 }
