@@ -1,5 +1,6 @@
 package ro.ubb.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.ubb.model.Announcement;
 import ro.ubb.model.Discussion;
@@ -11,7 +12,7 @@ import java.util.List;
 @Service
 public class DiscussionServiceImpl implements DiscussionService{
 
-    DiscussionRepository discussionRepository;
+    private DiscussionRepository discussionRepository;
 
     @Override
     public Discussion add(Discussion discussion) {
@@ -26,5 +27,15 @@ public class DiscussionServiceImpl implements DiscussionService{
     @Override
     public List<Discussion> getAllByAnnouncement(Announcement announcement) {
         return discussionRepository.getAllByAnnouncement(announcement);
+    }
+
+    @Override
+    public List<Discussion> getAllByAnnouncementId(int announcementId) {
+        return discussionRepository.getAllByAnnouncementId(announcementId);
+    }
+
+    @Autowired
+    public void setDiscussionRepository(DiscussionRepository discussionRepository) {
+        this.discussionRepository = discussionRepository;
     }
 }

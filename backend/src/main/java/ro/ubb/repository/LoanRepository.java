@@ -7,6 +7,6 @@ import ro.ubb.model.Loan;
 
 public interface LoanRepository extends JpaRepository<Loan, Integer> {
 
-    @Query("select l from Loan l where l.discussion.interestedUser = :interestedUserId and l.discussion.interestedUser = :announcement")
+    @Query("select l from Loan l where l.discussion.interestedUser.id = :interested_user_id and l.discussion.discussedAnnouncement.id = :announcement_id")
     Loan getByAnnouncementAndInterestedUser(@Param("interested_user_id") int interestedUserId, @Param("announcement_id") int announcement);
 }

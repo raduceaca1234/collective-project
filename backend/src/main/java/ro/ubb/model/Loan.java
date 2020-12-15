@@ -21,15 +21,15 @@ public class Loan {
     @EqualsAndHashCode.Include
     private int id;
 
-    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "loan")
+    @OneToOne
+    @JoinColumn(name="discussion_id", nullable = false)
     private Discussion discussion;
 
     @Column(name = "loan_date", insertable = false)
     private Date loanDate;
 
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name="id")
+    @OneToOne(mappedBy = "loan")
     private ClosedLoan closedLoan;
 
 }

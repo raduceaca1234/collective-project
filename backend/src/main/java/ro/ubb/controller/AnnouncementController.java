@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/announcement")
@@ -136,8 +137,17 @@ public class AnnouncementController {
         .body(ArrayUtils.toPrimitive(bytes));
   }
 
+  @GetMapping(value = "/interestedIn/{id}")
+  ResponseEntity<?> getInterestedUsers(@PathVariable Integer id){
+    List<Discussion> discussions = discussionService.getAllByAnnouncementId(id);
+    List<InterestedUserDto> dtos = discussions.stream().map(discussion ->
+      new InterestedUserDto(jwtUtil.createJWT(discussion.getInterestedUser().getId(),JWTUtil.DEFAULT_VALIDITY),discussion.getInterestedUser().getEmail()))
+            .collect(Collectors.toList());
+    return ResponseEntity.ok(dtos);
+  }
+
   @PostMapping(value = "/discussion")
-  ResponseEntity<?> startDiscussion(@ModelAttribute LoanDto loanDto) {
+  ResponseEntity<?> startDiscussion(@RequestBody LoanDto loanDto) {
     int interestedUser = Integer.parseInt(jwtUtil.decodeJWT(loanDto.getInterestedTokenUser()).getId());
     int announcementId = loanDto.getAnnouncementId();
 
@@ -190,7 +200,7 @@ public class AnnouncementController {
   }
 
   @PostMapping(value = "/loan")
-  ResponseEntity<?> loan(@ModelAttribute LoanDto loanDto) {
+  ResponseEntity<?> loan(@RequestBody LoanDto loanDto) {
     int interestedUser = Integer.parseInt(jwtUtil.decodeJWT(loanDto.getInterestedTokenUser()).getId());
     int announcementId = loanDto.getAnnouncementId();
 
@@ -227,7 +237,7 @@ public class AnnouncementController {
   }
 
   @PostMapping(value = "/closed-loan")
-  ResponseEntity<?> closeLoan(@ModelAttribute LoanDto loanDto) {
+  ResponseEntity<?> closeLoan(@RequestBody LoanDto loanDto) {
     int interestedUser = Integer.parseInt(jwtUtil.decodeJWT(loanDto.getInterestedTokenUser()).getId());
     int announcementId = loanDto.getAnnouncementId();
 
