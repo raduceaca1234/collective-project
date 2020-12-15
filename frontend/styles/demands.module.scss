@@ -34,6 +34,10 @@
             &:nth-child(even) {
                 background-color: rgba( #818181, 0.1);
             }
+
+            &.loan {
+                background-color: rgba(blue, 0.3) !important;
+            }
         }
     }
 }

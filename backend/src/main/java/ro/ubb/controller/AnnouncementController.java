@@ -110,7 +110,7 @@ public class AnnouncementController {
   }
 
   @GetMapping(value = "/{id}")
-  ResponseEntity<?> getAnnouncementDetailsById(@PathVariable Integer id) {
+  ResponseEntity<?> getAnnouncementDetailsById(@PathVariable Integer id, @RequestHeader(value = "token", required = false) String token) {
     log.info("calling announcementService getById...");
     Announcement announcement = announcementService.getById(id);
     log.info("announcementService getById call done, announcement={}...", announcement);
@@ -121,7 +121,16 @@ public class AnnouncementController {
     log.info("fetching image bytes for announcement={}..", announcement);
     List<Byte[]> imageBytes = imageService.getBytesForAnnouncement(id);
     log.info("image bytes fetching complete..");
-    return ResponseEntity.ok(dtoConverter.convertAnnouncementWithImages(announcement, imageBytes));
+    BytesAnnouncementDto response = dtoConverter.convertAnnouncementWithImages(announcement, imageBytes);
+
+    if(token != null) {
+      int ownerId = Integer.parseInt(jwtUtil.decodeJWT(token).getId());
+      if(ownerId == announcement.getUser().getId()) {
+        response.setOwnerId(token);
+      }
+    }
+
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping(value = "/thumbnail/{id}")
@@ -141,9 +150,25 @@ public class AnnouncementController {
   ResponseEntity<?> getInterestedUsers(@PathVariable Integer id){
     List<Discussion> discussions = discussionService.getAllByAnnouncementId(id);
     List<InterestedUserDto> dtos = discussions.stream().map(discussion ->
-      new InterestedUserDto(jwtUtil.createJWT(discussion.getInterestedUser().getId(),JWTUtil.DEFAULT_VALIDITY),discussion.getInterestedUser().getEmail()))
+      new InterestedUserDto(jwtUtil.createJWT(discussion.getInterestedUser().getId(),JWTUtil.DEFAULT_VALIDITY),discussion.getInterestedUser().getEmail(), discussion.getId()))
             .collect(Collectors.toList());
     return ResponseEntity.ok(dtos);
+  }
+
+  @GetMapping(value = "/loans/{id}")
+  ResponseEntity<?> getLoans(@PathVariable Integer id) {
+    Loan loan = loanService.getLoansByAnnouncementId(id);
+
+    if(loan == null) {
+      return ResponseEntity.ok(null);
+    }
+
+    LoanResponseDto loanResp = LoanResponseDto.builder()
+            .discussionId(loan.getDiscussion().getId())
+            .id(loan.getId())
+            .build();
+
+    return ResponseEntity.ok(loanResp);
   }
 
   @PostMapping(value = "/discussion")
@@ -217,6 +242,12 @@ public class AnnouncementController {
       log.error("no announcement with id={}", announcementId);
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    Loan currentLoan = loanService.getByAnnouncementAndInterestedUser(user, announcement);
+    if(currentLoan != null) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
     log.info("announcementService getById complete");
     log.info("calling discussionService getByAnnouncementAndInterestedUser ...");
     Discussion discussion = discussionService.getByAnnouncementAndInterestedUser(user, announcement);

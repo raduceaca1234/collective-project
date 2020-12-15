@@ -7,6 +7,8 @@ import ro.ubb.model.Loan;
 import ro.ubb.model.User;
 import ro.ubb.repository.LoanRepository;
 
+import java.util.List;
+
 @Service
 public class LoanServiceImpl implements LoanService {
 
@@ -20,6 +22,10 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public Loan getByAnnouncementAndInterestedUser(User user, Announcement announcement) {
         return loanRepository.getByAnnouncementAndInterestedUser(user.getId(), announcement.getId());
+    }
+
+    public Loan getLoansByAnnouncementId(Integer id) {
+        return loanRepository.findByAnnouncement(id);
     }
 
     @Autowired
