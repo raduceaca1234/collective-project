@@ -2,15 +2,21 @@ package ro.ubb.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ro.ubb.converter.DtoConverter;
+import ro.ubb.dto.PagedAnnouncementDto;
+import ro.ubb.model.Announcement;
 import ro.ubb.security.JWTUtil;
 import ro.ubb.service.UserService;
 import ro.ubb.service.WishListService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/wishlist")
@@ -20,6 +26,7 @@ public class WishlistController {
     private WishListService wishListService;
     private UserService userService;
     private JWTUtil jwtUtil;
+    private DtoConverter dtoConverter;
 
     @Autowired
     public void setWishListService(WishListService wishListService) {
@@ -36,6 +43,12 @@ public class WishlistController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Autowired
+    public void setDtoConverter(DtoConverter dtoConverter) {
+        this.dtoConverter = dtoConverter;
+    }
+
+
     @PostMapping(value = "/{ownerToken}/{announcementId}")
     ResponseEntity<?> postWishList(@PathVariable String ownerToken, @PathVariable Integer announcementId) {
         int ownerId = Integer.parseInt(jwtUtil.decodeJWT(ownerToken).getId());
@@ -51,6 +64,27 @@ public class WishlistController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{ownerId}/{pageNo}/{pageSize}")
+    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncementsOfWishlist(@PathVariable Integer ownerId,
+                                                                          @PathVariable Integer pageNo, @PathVariable Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        log.info("pageNo = {}", pageNo);
+        log.info("pageSize = {}", pageSize);
+        log.info("calling wishListService get...");
+        Page<Announcement> announcementsOfWishlistPage = wishListService.getAllAnnouncementPaged(pageable, ownerId);
+        log.info("wishListService get finished...");
+        log.info("page = {}", announcementsOfWishlistPage);
+
+        List<PagedAnnouncementDto> pagedAnnouncementDtos = new ArrayList<>();
+        for (Announcement a : announcementsOfWishlistPage) {
+            PagedAnnouncementDto pad = dtoConverter.convertAnnouncementForGetPaginated(a);
+            pad.setPageNumber(pageNo);
+            pagedAnnouncementDtos.add(pad);
+        }
+        return ResponseEntity.ok(pagedAnnouncementDtos);
     }
 
 }

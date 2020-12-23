@@ -21,4 +21,6 @@ public interface WishListService {
     Wishlist getWishListByOwnerId(int id);
 
     void  addItem(int ownerId, int  announcementId);
+
+    Page<Announcement> getAllAnnouncementPaged(Pageable pageable, int ownerId);
 }

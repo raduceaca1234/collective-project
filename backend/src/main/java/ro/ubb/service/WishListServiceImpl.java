@@ -3,6 +3,7 @@ package ro.ubb.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.ubb.model.Announcement;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -73,5 +75,12 @@ public class WishListServiceImpl implements WishListService {
         }
         announcementSet.add(announcement);
         wishlist.setWantedAnnouncements(announcementSet);
+    }
+
+    @Override
+    public Page<Announcement> getAllAnnouncementPaged(Pageable pageable, int ownerId) {
+        Set<Announcement> announcementsOfWishlist = getWishListByOwnerId(ownerId).getWantedAnnouncements();
+        Page<Announcement> announcementsPage = new PageImpl<Announcement>(announcementsOfWishlist.stream().collect(Collectors.toList()), pageable,announcementsOfWishlist.size());
+        return announcementsPage;
     }
 }
