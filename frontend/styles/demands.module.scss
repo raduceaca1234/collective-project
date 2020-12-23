@@ -1,0 +1,43 @@
+.container {
+    background-color: #FFFFFF;
+    padding: 20px 16px;
+    top: 60px;
+
+    > h3 {
+        font-size: 14px;
+        color: #acacac;
+        font-weight: 400;
+        margin: 0px;
+    }
+
+    .demands_list {
+        list-style-type: none;
+        margin: 0px;
+        padding: 0px;
+
+        li {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0px 25px;
+
+            i {
+                color: #818181;
+            }
+
+            h3 {
+                font-weight: 400;
+                color: #333333;
+            }
+
+            &:nth-child(even) {
+                background-color: rgba( #818181, 0.1);
+            }
+
+            &.loan {
+                background-color: rgba(blue, 0.3) !important;
+            }
+        }
+    }
+}

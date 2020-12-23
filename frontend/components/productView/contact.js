@@ -3,7 +3,7 @@ import styles from '../../styles/contact.module.scss'
 
 
 
-const Contact = () =>{
+const Contact = (props) =>{
     const [formData,setFormData] = useState({})
     const data=[
         {
@@ -47,8 +47,8 @@ const Contact = () =>{
     }
 
     return(
-        <div>
-            <h1 className={styles.h1}>Contact</h1>
+        <>
+            <h1 className={styles.h1} ref={props.headref}>Contact</h1>
             <div  className={styles.main_div}>
                 <form onSubmit={handleSubmit} className={styles.new_info}>
                     <p className={styles.text}>Your name</p>
@@ -62,8 +62,9 @@ const Contact = () =>{
 
                     <p className={styles.text}>Contact phone</p>
                     <input className={styles.input}
-                    type="number"
+                    type="text"
                     name="phone_number"
+                    placeholder="+40"
                     onChange={updateInput}
                     value={formData.phone_number}
                     />
@@ -113,7 +114,7 @@ const Contact = () =>{
             
             
 
-        </div>
+        </>
     )
 }
 export default Contact

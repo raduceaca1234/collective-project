@@ -155,6 +155,7 @@ const Inventory = () => {
                                     name={e.name}
                                     category={e.category}
                                     price={e.pricePerDay}
+                                    id={e.id}
                                 />
                                 
                             ))

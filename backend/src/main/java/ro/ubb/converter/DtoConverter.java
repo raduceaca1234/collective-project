@@ -76,7 +76,7 @@ public class DtoConverter {
     log.debug("converting announcement pojo={} to an announcement dto with images", announcement);
     return BytesAnnouncementDto.builder()
         .id(announcement.getId())
-        .ownerId(jwtUtil.createJWT(announcement.getId(), JWTUtil.DEFAULT_VALIDITY))
+        .ownerId(jwtUtil.createJWT(announcement.getUser().getId(), JWTUtil.DEFAULT_VALIDITY))
         .name(announcement.getName())
         .description(announcement.getDescription())
         .location(announcement.getLocation())
