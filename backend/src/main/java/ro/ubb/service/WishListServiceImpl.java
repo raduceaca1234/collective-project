@@ -79,6 +79,9 @@ public class WishListServiceImpl implements WishListService {
 
     @Override
     public Page<Announcement> getAllAnnouncementPaged(Pageable pageable, int ownerId) {
+        if(getWishListByOwnerId(ownerId).getWantedAnnouncements() == null){
+            return new PageImpl<>(new ArrayList<>());
+        }
         Set<Announcement> announcementsOfWishlist = getWishListByOwnerId(ownerId).getWantedAnnouncements();
         Page<Announcement> announcementsPage = new PageImpl<Announcement>(announcementsOfWishlist.stream().collect(Collectors.toList()), pageable,announcementsOfWishlist.size());
         return announcementsPage;
