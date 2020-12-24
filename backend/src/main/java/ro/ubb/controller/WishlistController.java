@@ -71,6 +71,9 @@ public class WishlistController {
                                                                           @PathVariable Integer pageNo, @PathVariable Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
+        if (!userService.existsById(ownerId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         log.info("pageNo = {}", pageNo);
         log.info("pageSize = {}", pageSize);
         log.info("calling wishListService get...");

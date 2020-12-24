@@ -2,7 +2,9 @@ package ro.ubb.controller;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
+import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,29 +13,32 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import ro.ubb.converter.DtoConverter;
-import ro.ubb.model.Announcement;
-import ro.ubb.model.User;
-import ro.ubb.model.Wishlist;
+import ro.ubb.dto.AnnouncementDto;
+import ro.ubb.dto.BytesAnnouncementDto;
+import ro.ubb.dto.OrderingAndFilteringDto;
+import ro.ubb.dto.PagedAnnouncementDto;
+import ro.ubb.model.*;
 import ro.ubb.model.enums.Category;
+import ro.ubb.model.enums.Order;
 import ro.ubb.model.enums.Status;
 import ro.ubb.security.JWTUtil;
-import ro.ubb.service.AnnouncementService;
-import ro.ubb.service.UserService;
-import ro.ubb.service.WishListService;
+import ro.ubb.service.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WishlistController.class)
 public class WishListControllerTest {
@@ -101,35 +106,27 @@ public class WishListControllerTest {
         Announcement announcementAdded = announcement;
         announcementAdded.setId(1);
         given(announcementService.add(announcement)).willReturn(announcementAdded);
-        Set<Announcement>announcements =new HashSet<>();
+        Set<Announcement> announcements =new HashSet<>();
         announcements.add(announcement);
         Wishlist wishlist = new Wishlist();
         wishlist.setWantedAnnouncements(announcements);
-        given(wishListService.getWishListByOwnerId(1)).willReturn(wishlist);
-        List<Announcement> announcementsInWishList= wishListService.getWishListByOwnerId(1).getWantedAnnouncements().stream().collect(Collectors.toList());
+        given(wishListService.getWishListByOwnerId(2)).willReturn(wishlist);
+        given(dtoConverter.convertAnnouncementForGetPaginated(any(Announcement.class))).willReturn(new PagedAnnouncementDto());
+        given(wishListService.getAllAnnouncementPaged(any(Pageable.class), anyInt())).willReturn((new PageImpl<>(Arrays.asList(announcement)))); // metoda asta e apelata de controller dar nu e mockuita
+        Set<Announcement> announcementsInWishList = new HashSet<>();
+        announcementsInWishList.add(Announcement.builder().id(1).build());
+        announcementsInWishList.add(Announcement.builder().id(2).build());
 
-        Pageable pageable1 = PageRequest.of(0, 5);
-        Pageable pageable2 = PageRequest.of(1, 5);
-        Pageable pageable3 = PageRequest.of(2, 5);
-        given(wishListService.getWishListByOwnerId(1).getWantedAnnouncements().stream().collect(Collectors.toList())).willReturn(announcementsInWishList);
-        given(wishListService.getAllAnnouncementPaged(pageable1, 1))
-                .willReturn(new PageImpl<>(announcementsInWishList.subList(0, 5)));
-        given(wishListService.getAllAnnouncementPaged(pageable2, 1))
-                .willReturn(new PageImpl<>(announcementsInWishList.subList(5, 10)));
-        given(wishListService.getAllAnnouncementPaged(pageable3, 1))
-                .willReturn(new PageImpl<>(announcementsInWishList.subList(10, 11)));
         String result =
                 mockMvc
-                        .perform(get("/api/wishlist/1/1/5"))
+                        .perform(get("/api/wishlist/2/1/5"))
                         .andDo(print())
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
 
-        verify(wishListService).getAllAnnouncementPaged(any(Pageable.class), 1);
-        verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(5));
-        verify(dtoConverter).convertAnnouncementForGetPaginated(announcementService.getAll().get(9));
+        verify(wishListService).getAllAnnouncementPaged(any(Pageable.class), eq(2));
     }
 
 }
