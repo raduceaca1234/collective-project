@@ -116,15 +116,11 @@ public class WishListControllerTest {
         Set<Announcement> announcementsInWishList = new HashSet<>();
         announcementsInWishList.add(Announcement.builder().id(1).build());
         announcementsInWishList.add(Announcement.builder().id(2).build());
-
-        String result =
-                mockMvc
-                        .perform(get("/api/wishlist/2/1/5"))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
+        String token = jwtUtil.createJWT(1, JWTUtil.DEFAULT_VALIDITY);
+        mockMvc.perform(
+                get("/api/wishlist/{token}/1/5", token)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk());
 
         verify(wishListService).getAllAnnouncementPaged(any(Pageable.class), eq(2));
     }

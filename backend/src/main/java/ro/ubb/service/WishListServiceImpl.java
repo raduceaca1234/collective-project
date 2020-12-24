@@ -68,8 +68,9 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public Wishlist addItem(int ownerId, int announcementId) {
         Announcement announcement = announcementService.getById(announcementId);
-        Wishlist wishlist = getWishListByOwnerId(ownerId);
-        Set<Announcement> announcementSet = wishlist.getWantedAnnouncements();
+        Wishlist wishlist = new Wishlist();
+        wishlist = getWishListByOwnerId(ownerId);
+        Set<Announcement> announcementSet = getWishListByOwnerId(ownerId).getWantedAnnouncements();
         if (announcementSet == null) {
             announcementSet = new HashSet<>();
         }
