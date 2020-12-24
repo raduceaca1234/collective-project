@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ro.ubb.converter.DtoConverter;
 import ro.ubb.dto.PagedAnnouncementDto;
 import ro.ubb.model.Announcement;
+import ro.ubb.model.Wishlist;
 import ro.ubb.security.JWTUtil;
 import ro.ubb.service.UserService;
 import ro.ubb.service.WishListService;
@@ -52,12 +53,13 @@ public class WishlistController {
     @PostMapping(value = "/{ownerToken}/{announcementId}")
     ResponseEntity<?> postWishList(@PathVariable String ownerToken, @PathVariable Integer announcementId) {
         int ownerId = Integer.parseInt(jwtUtil.decodeJWT(ownerToken).getId());
+        Wishlist wishlist = new Wishlist();
         if (!userService.existsById(ownerId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         try {
             log.info("calling wishlistService add ...");
-            wishListService.addItem(ownerId, announcementId);
+             wishlist = wishListService.addItem(ownerId, announcementId);
             log.info("wishlistService add finished...");
         } catch (Exception e) {
             log.error("Exception encountered-" + e.getMessage());
@@ -66,11 +68,11 @@ public class WishlistController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{ownerId}/{pageNo}/{pageSize}")
-    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncementsOfWishlist(@PathVariable Integer ownerId,
+    @GetMapping(value = "/{ownerToken}/{pageNo}/{pageSize}")
+    ResponseEntity<List<PagedAnnouncementDto>> getAnnouncementsOfWishlist(@PathVariable String ownerToken,
                                                                           @PathVariable Integer pageNo, @PathVariable Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-
+        int ownerId = Integer.parseInt(jwtUtil.decodeJWT(ownerToken).getId());
         if (!userService.existsById(ownerId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

@@ -66,7 +66,7 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public void addItem(int ownerId, int announcementId) {
+    public Wishlist addItem(int ownerId, int announcementId) {
         Announcement announcement = announcementService.getById(announcementId);
         Wishlist wishlist = getWishListByOwnerId(ownerId);
         Set<Announcement> announcementSet = wishlist.getWantedAnnouncements();
@@ -75,13 +75,12 @@ public class WishListServiceImpl implements WishListService {
         }
         announcementSet.add(announcement);
         wishlist.setWantedAnnouncements(announcementSet);
+        add(wishlist);
+        return wishlist;
     }
 
     @Override
     public Page<Announcement> getAllAnnouncementPaged(Pageable pageable, int ownerId) {
-        if(getWishListByOwnerId(ownerId).getWantedAnnouncements() == null){
-            return new PageImpl<>(new ArrayList<>());
-        }
         Set<Announcement> announcementsOfWishlist = getWishListByOwnerId(ownerId).getWantedAnnouncements();
         Page<Announcement> announcementsPage = new PageImpl<Announcement>(announcementsOfWishlist.stream().collect(Collectors.toList()), pageable,announcementsOfWishlist.size());
         return announcementsPage;

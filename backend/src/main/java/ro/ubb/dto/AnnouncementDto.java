@@ -15,7 +15,7 @@ import java.util.List;
 public class AnnouncementDto {
     @EqualsAndHashCode.Include
     private int id;
-    @NotNull private String ownerId;
+    @NotNull private String ownerToken;
     @NotNull private String name;
     @NotNull private String description;
     @NotNull private String location;

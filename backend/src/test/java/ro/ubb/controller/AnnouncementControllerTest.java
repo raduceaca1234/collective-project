@@ -278,7 +278,7 @@ class AnnouncementControllerTest {
   void testPostAnnouncement_userExists() throws Exception {
     AnnouncementDto dto =
         AnnouncementDto.builder()
-            .ownerId("token")
+            .ownerToken("token")
             .name("test_name1")
             .description("test_description1")
             .location("test_location1")
@@ -328,7 +328,7 @@ class AnnouncementControllerTest {
   void testPostAnnouncement_userDoesNotExist() throws Exception {
     AnnouncementDto dto =
         AnnouncementDto.builder()
-            .ownerId("token")
+            .ownerToken("token")
             .name("test_name1")
             .description("test_description1")
             .location("test_location1")

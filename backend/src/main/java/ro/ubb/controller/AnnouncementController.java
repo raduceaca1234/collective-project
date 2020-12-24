@@ -81,7 +81,7 @@ public class AnnouncementController {
   @PostMapping
   ResponseEntity<?> postAnnouncement(@ModelAttribute AnnouncementDto announcementDto) {
     Announcement announcementToAdd = dtoConverter.convertAnnouncementDtoForPosting(announcementDto);
-    int ownerId = Integer.parseInt(jwtUtil.decodeJWT(announcementDto.getOwnerId()).getId());
+    int ownerId = Integer.parseInt(jwtUtil.decodeJWT(announcementDto.getOwnerToken()).getId());
     if (!userService.existsById(ownerId)) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
