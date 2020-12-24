@@ -513,15 +513,18 @@ class AnnouncementControllerTest {
     given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
     given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
     given(announcementService.getById(any(Integer.class))).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
-
+    String token = jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY);
     mockMvc.perform(
             post("/api/announcement/discussion")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
-                    .param("announcementId", "2"))
-            .andExpect(status().isOk());
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                            + "  \"interestedTokenUser\": \"" + token + "\",\n"
+                            + "  \"announcementId\": 2\n"
+                            + "}"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-    verify(jwtUtil).decodeJWT(any(String.class));
+    verify(jwtUtil).decodeJWT("token");
     verify(userService).getById(3);
     verify(announcementService).getById(2);
     verify(discussionService).add(any(Discussion.class));
@@ -535,12 +538,14 @@ class AnnouncementControllerTest {
     given(jwtUtil.decodeJWT(any(String.class))).willReturn(claims);
     given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
     given(announcementService.getById(any(Integer.class))).willReturn(null);
-
+    String token = jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY);
     mockMvc.perform(
             post("/api/announcement/discussion")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
-                    .param("announcementId", "2"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                            + "  \"interestedTokenUser\": \"" + token + "\",\n"
+                            + "  \"announcementId\": 2\n"
+                            + "}"))
             .andExpect(status().isNotFound());
 
     verify(jwtUtil).decodeJWT(any(String.class));
@@ -585,12 +590,14 @@ class AnnouncementControllerTest {
             .discussedAnnouncement(Announcement.builder().id(2).user(User.builder().id(4).build()).build())
             .interestedUser(User.builder().id(3).build())
             .build());
-
+    String token = jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY);
     mockMvc.perform(
             post("/api/announcement/loan")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
-                    .param("announcementId", "2"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                            + "  \"interestedTokenUser\": \"" + token + "\",\n"
+                            + "  \"announcementId\": 2\n"
+                            + "}"))
             .andExpect(status().isOk());
 
     verify(jwtUtil).decodeJWT(any(String.class));
@@ -612,12 +619,14 @@ class AnnouncementControllerTest {
             .discussedAnnouncement(Announcement.builder().id(2).user(User.builder().id(4).build()).build())
             .interestedUser(User.builder().id(3).build())
             .build());
-
+    String token = jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY);
     mockMvc.perform(
             post("/api/announcement/loan")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
-                    .param("announcementId", "2"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                            + "  \"interestedTokenUser\": \"" + token + "\",\n"
+                            + "  \"announcementId\": 2\n"
+                            + "}"))
             .andExpect(status().isNotFound());
 
     verify(jwtUtil).decodeJWT(any(String.class));
@@ -641,12 +650,14 @@ class AnnouncementControllerTest {
                     .interestedUser(User.builder().id(3).build())
                     .build()
     ).build());
-
+    String token = jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY);
     mockMvc.perform(
             post("/api/announcement/closed-loan")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
-                    .param("announcementId", "2"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                            + "  \"interestedTokenUser\": \"" + token + "\",\n"
+                            + "  \"announcementId\": 2\n"
+                            + "}"))
             .andExpect(status().isOk());
 
     verify(jwtUtil).decodeJWT(any(String.class));
@@ -665,12 +676,14 @@ class AnnouncementControllerTest {
     given(userService.getById(any(Integer.class))).willReturn(User.builder().id(3).build());
     given(announcementService.getById(any(Integer.class))).willReturn(Announcement.builder().id(2).user(User.builder().id(4).build()).build());
     given(loanService.getByAnnouncementAndInterestedUser(any(User.class), any(Announcement.class))).willReturn(null);
-
+    String token = jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY);
     mockMvc.perform(
             post("/api/announcement/closed-loan")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .param("interestedTokenUser", jwtUtil.createJWT(3, JWTUtil.DEFAULT_VALIDITY))
-                    .param("announcementId", "2"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                            + "  \"interestedTokenUser\": \"" + token + "\",\n"
+                            + "  \"announcementId\": 2\n"
+                            + "}"))
             .andExpect(status().isNotFound());
 
     verify(jwtUtil).decodeJWT(any(String.class));

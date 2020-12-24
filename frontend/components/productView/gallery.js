@@ -46,8 +46,6 @@ const PhotoCarousel = (props) => {
 }
 
 const Gallery = (props) => {
-
-
     const [activePhoto, setActivePhoto] = useState(0)
 
     const frameClick = (frame_id) => {
@@ -73,32 +71,28 @@ const Gallery = (props) => {
     }
 
     return(
-        <div className = "grid">
-            <div className = "col-7">
-                <div className = {styles.gallery}>
-                    <div className = {styles.bigPhotoDiv + (data.length > 0 && (" " + styles.noPhotos))}>
-                        {
-                            data.length > 0 ? <img className = {styles.bigPhoto} src = {data[activePhoto].url} /> : 
-                            <p>
-                                No photos.
-                            </p>
-                        }
-                        <div className = {styles.controller}>
-                            <div className = {styles.control} onClick = {() => prev()}>
-                                <p>Prev</p>
-                            </div>
-                            <div className = {styles.control} onClick = {() => next()}>
-                                <p>Next</p>
-                            </div>
-                        </div>
+        <div className = {styles.gallery}>
+            <div className = {styles.bigPhotoDiv + (data.length > 0 && (" " + styles.noPhotos))}>
+                {
+                    data.length > 0 ? <img className = {styles.bigPhoto} src = {data[activePhoto].url} /> : 
+                    <p>
+                        No photos.
+                    </p>
+                }
+                <div className = {styles.controller}>
+                    <div className={styles.control} onClick = {() => prev()}>
+                        Prev
                     </div>
-                    <PhotoCarousel
-                        itemClick = {frameClick}
-                        activePhoto = {activePhoto}
-                        photos = {data}
-                    />
+                    <div className={styles.control} onClick = {() => next()}>
+                        Next
+                    </div>
                 </div>
             </div>
+            <PhotoCarousel
+                itemClick = {frameClick}
+                activePhoto = {activePhoto}
+                photos = {data}
+            />
         </div>
     )
 }

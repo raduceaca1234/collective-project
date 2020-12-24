@@ -1,0 +1,69 @@
+.container {
+    padding: 60px 5% 60px;
+
+    .prod {
+        &_page {
+
+            &_controlls {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                background-color: transparent;
+    
+                &_lhs {
+    
+                    h1 {
+                        margin: 0px;
+                    }
+                    p {
+                        color: #818181;
+                        margin: 0px;
+                    }
+                }
+    
+                &_rhs {
+                    button {
+                        margin-right: 10px;
+    
+                        &:last-child {
+                            margin: 0px;
+                        }
+                    }
+                }
+            }
+        }
+
+        &_content {
+            margin-top: 35px;
+            grid-column-gap: 20px;
+
+
+            .details {
+                position: relative;
+            }
+        }
+    }
+
+    
+    button {
+        background-color: #222222;
+        border-radius: 20px;
+        color: #FFFFFF;
+        padding: 10px 20px;
+        outline: 0 none;
+        border: 0 none;
+
+        i {
+            background-color: red;
+            padding: 0px 4px;
+            border-radius: 20px;
+            font-style: normal;
+            margin-right: 2px;
+        }
+
+        &:hover {
+            background-color: #333333;
+            cursor: pointer;
+        }
+    }
+}

@@ -35,8 +35,7 @@ public class Discussion {
     private Announcement discussedAnnouncement;
 
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name="id")
+    @OneToOne(mappedBy = "discussion")
     private Loan loan;
 
 

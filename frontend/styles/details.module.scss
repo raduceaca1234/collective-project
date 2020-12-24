@@ -1,0 +1,64 @@
+.container {
+    background-color: #FFFFFF;
+    padding: 20px 16px;
+    position: sticky;
+    top: 60px;
+
+    h3 {
+        font-size: 14px;
+        color: #acacac;
+        font-weight: 400;
+        margin: 0px;
+    }
+
+    .labels {
+        margin-top: 15px;
+        margin-bottom: 20px;
+
+        .label {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: 10px;
+
+            &.rate {
+                margin: 0px !important;
+
+                h2 {
+                    margin: 0px;
+                    font-size: 18px;
+                    color: #222222;
+    
+                    &:first-child {
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            h2 {
+                font-size: 16px;
+                margin: 0px;
+                color: #818181;
+            }
+
+            p {
+                margin: 0px;
+            }
+        }
+    }
+
+    .review_block {
+        margin-bottom: 20px;
+
+        p {
+            color: #818181;
+        }
+    }
+
+    .description_block {
+        p {
+            line-height: 22px;
+            color: #333333;
+        }
+    }
+}

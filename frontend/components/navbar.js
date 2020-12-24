@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions as userActions } from '../redux/user/actions'
 import Link from 'next/Link'
-import { route } from 'next/dist/next-server/server/router'
 
 const AuthControlls = () => {
 
@@ -97,10 +96,14 @@ const SearchBar = () => {
 
 const Navbar = () => {
     const user = useSelector(state => (state.user))
+    const router = useRouter()
 
     return (
         <div className={styles.container}>
-            <div className={styles.side + ' ' + styles.lhs}>
+            <div 
+                className={styles.side + ' ' + styles.lhs}
+                onClick={() => router.push('/')}
+            >
                 App name
             </div>
 

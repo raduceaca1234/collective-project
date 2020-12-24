@@ -1,11 +1,16 @@
 import styles from '../../styles/card.module.scss'
+import { useRouter } from 'next/router'
 
 const PLACEHOLDER = 'https://via.placeholder.com/217x305'
 
 const Card = (props) => {
-    
+    const router = useRouter()
+
     return (
-        <div className = {styles.card}>
+        <div
+            className = {styles.card}
+            onClick={() => router.push(`/p/${props.id}`)}    
+        >
             <div className={styles.image}>
                 <img src={props.img} onError={(e)=>{e.target.onerror=null; e.target.src=PLACEHOLDER;}}/>
             </div>

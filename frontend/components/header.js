@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-
+import { useRouter } from 'next/router'
 import styles from '../styles/header.module.scss'
 // import header_image from '../public/headerImage.png'
 
 const Header = () => {
+    const router = useRouter()
 
     const [option, setOption] = useState(0);
     const data = ['Overview', 'Profile Info']
@@ -25,7 +26,7 @@ const Header = () => {
                     </div>
                 </div>
                 <div className={styles.buttons}>
-                    <button className={styles.inventoryButton} onClick={()=>{}}>See inventory</button>
+                    <button className={styles.inventoryButton} onClick={()=>{router.push('/inventory')}}>See inventory</button>
                     <button className={styles.readMoreButton}>Read more</button>
                 </div>
             </div>

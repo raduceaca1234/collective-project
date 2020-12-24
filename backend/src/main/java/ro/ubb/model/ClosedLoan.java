@@ -21,7 +21,8 @@ public class ClosedLoan {
     @EqualsAndHashCode.Include
     private int id;
 
-    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "closedLoan")
+    @OneToOne
+    @JoinColumn(name="loan_id", nullable = false)
     private Loan loan;
 
     @Column(name = "close_date", insertable = false)
