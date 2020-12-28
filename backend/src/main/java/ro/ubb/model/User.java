@@ -41,8 +41,7 @@ public class User {
     private Set<Announcement> announcements;
 
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name="id")
+    @OneToOne(mappedBy = "owner")
     private Wishlist wishlist;
 
     @ToString.Exclude

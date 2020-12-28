@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user);
                 Wishlist wishlist = new Wishlist(user);
                 wishListService.add(wishlist);
+                user.setWishlist(wishlist);
                 return true;
             }
             throw new SpecialError("Not a valid password", HttpStatus.FORBIDDEN);

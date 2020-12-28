@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.StrictMath.toIntExact;
+
 @Slf4j
 @Service
 public class WishListServiceImpl implements WishListService {
@@ -68,8 +70,7 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public Wishlist addItem(int ownerId, int announcementId) {
         Announcement announcement = announcementService.getById(announcementId);
-        Wishlist wishlist = new Wishlist();
-        wishlist = getWishListByOwnerId(ownerId);
+        Wishlist wishlist = getWishListByOwnerId(ownerId);
         Set<Announcement> announcementSet = getWishListByOwnerId(ownerId).getWantedAnnouncements();
         if (announcementSet == null) {
             announcementSet = new HashSet<>();
@@ -83,7 +84,15 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public Page<Announcement> getAllAnnouncementPaged(Pageable pageable, int ownerId) {
         Set<Announcement> announcementsOfWishlist = getWishListByOwnerId(ownerId).getWantedAnnouncements();
-        Page<Announcement> announcementsPage = new PageImpl<Announcement>(announcementsOfWishlist.stream().collect(Collectors.toList()), pageable,announcementsOfWishlist.size());
+        int start = toIntExact(pageable.getOffset());
+        int end = Math.min((start + pageable.getPageSize()), announcementsOfWishlist.size());
+
+        List<Announcement> output = new ArrayList<>();
+
+        if (start <= end) {
+            output = announcementsOfWishlist.stream().collect(Collectors.toList()).subList(start, end);
+        }
+        Page<Announcement> announcementsPage = new PageImpl<Announcement>(output, pageable,announcementsOfWishlist.size());
         return announcementsPage;
     }
 }

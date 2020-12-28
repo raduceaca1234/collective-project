@@ -112,17 +112,17 @@ public class WishListControllerTest {
         wishlist.setWantedAnnouncements(announcements);
         given(wishListService.getWishListByOwnerId(2)).willReturn(wishlist);
         given(dtoConverter.convertAnnouncementForGetPaginated(any(Announcement.class))).willReturn(new PagedAnnouncementDto());
-        given(wishListService.getAllAnnouncementPaged(any(Pageable.class), anyInt())).willReturn((new PageImpl<>(Arrays.asList(announcement)))); // metoda asta e apelata de controller dar nu e mockuita
+        given(wishListService.getAllAnnouncementPaged(any(Pageable.class), anyInt())).willReturn((new PageImpl<>(Arrays.asList(announcement))));
         Set<Announcement> announcementsInWishList = new HashSet<>();
         announcementsInWishList.add(Announcement.builder().id(1).build());
         announcementsInWishList.add(Announcement.builder().id(2).build());
-        String token = jwtUtil.createJWT(1, JWTUtil.DEFAULT_VALIDITY);
+        String token = jwtUtil.createJWT(2, JWTUtil.DEFAULT_VALIDITY);
         mockMvc.perform(
                 get("/api/wishlist/{token}/1/5", token)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
 
-        verify(wishListService).getAllAnnouncementPaged(any(Pageable.class), eq(2));
+        verify(wishListService).getAllAnnouncementPaged(any(Pageable.class), eq(1));
     }
 
 }
