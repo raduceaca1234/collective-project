@@ -359,7 +359,7 @@ class AnnouncementControllerTest {
         .perform(
             post("/api/announcement")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .param("ownerId", jwtUtil.createJWT(100, JWTUtil.DEFAULT_VALIDITY))
+                .param("ownerToken", jwtUtil.createJWT(100, JWTUtil.DEFAULT_VALIDITY))
                 .param("name", "test_name1")
                 .param("description", "test_description1")
                 .param("location", "test_location1")
