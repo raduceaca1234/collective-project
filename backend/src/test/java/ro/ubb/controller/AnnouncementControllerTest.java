@@ -278,7 +278,7 @@ class AnnouncementControllerTest {
   void testPostAnnouncement_userExists() throws Exception {
     AnnouncementDto dto =
         AnnouncementDto.builder()
-            .ownerId("token")
+            .ownerToken("token")
             .name("test_name1")
             .description("test_description1")
             .location("test_location1")
@@ -311,7 +311,7 @@ class AnnouncementControllerTest {
         .perform(
             post("/api/announcement")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .param("ownerId", jwtUtil.createJWT(1, JWTUtil.DEFAULT_VALIDITY))
+                .param("ownerToken", jwtUtil.createJWT(1, JWTUtil.DEFAULT_VALIDITY))
                 .param("name", "test_name1")
                 .param("description", "test_description1")
                 .param("location", "test_location1")
@@ -328,7 +328,7 @@ class AnnouncementControllerTest {
   void testPostAnnouncement_userDoesNotExist() throws Exception {
     AnnouncementDto dto =
         AnnouncementDto.builder()
-            .ownerId("token")
+            .ownerToken("token")
             .name("test_name1")
             .description("test_description1")
             .location("test_location1")
@@ -359,7 +359,7 @@ class AnnouncementControllerTest {
         .perform(
             post("/api/announcement")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .param("ownerId", jwtUtil.createJWT(100, JWTUtil.DEFAULT_VALIDITY))
+                .param("ownerToken", jwtUtil.createJWT(100, JWTUtil.DEFAULT_VALIDITY))
                 .param("name", "test_name1")
                 .param("description", "test_description1")
                 .param("location", "test_location1")

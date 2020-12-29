@@ -3,6 +3,7 @@ package ro.ubb.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.ubb.model.Announcement;
@@ -13,6 +14,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.lang.StrictMath.toIntExact;
 
 @Slf4j
 @Service
@@ -64,14 +68,31 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public void addItem(int ownerId, int announcementId) {
+    public Wishlist addItem(int ownerId, int announcementId) {
         Announcement announcement = announcementService.getById(announcementId);
         Wishlist wishlist = getWishListByOwnerId(ownerId);
-        Set<Announcement> announcementSet = wishlist.getWantedAnnouncements();
+        Set<Announcement> announcementSet = getWishListByOwnerId(ownerId).getWantedAnnouncements();
         if (announcementSet == null) {
             announcementSet = new HashSet<>();
         }
         announcementSet.add(announcement);
         wishlist.setWantedAnnouncements(announcementSet);
+        add(wishlist);
+        return wishlist;
+    }
+
+    @Override
+    public Page<Announcement> getAllAnnouncementPaged(Pageable pageable, int ownerId) {
+        Set<Announcement> announcementsOfWishlist = getWishListByOwnerId(ownerId).getWantedAnnouncements();
+        int start = toIntExact(pageable.getOffset());
+        int end = Math.min((start + pageable.getPageSize()), announcementsOfWishlist.size());
+
+        List<Announcement> output = new ArrayList<>();
+
+        if (start <= end) {
+            output = announcementsOfWishlist.stream().collect(Collectors.toList()).subList(start, end);
+        }
+        Page<Announcement> announcementsPage = new PageImpl<Announcement>(output, pageable,announcementsOfWishlist.size());
+        return announcementsPage;
     }
 }

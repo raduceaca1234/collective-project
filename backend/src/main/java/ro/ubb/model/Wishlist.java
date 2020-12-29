@@ -22,7 +22,8 @@ public class Wishlist {
     @EqualsAndHashCode.Include
     private int id;
 
-    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "wishlist")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
     @ManyToMany(fetch = FetchType.LAZY,

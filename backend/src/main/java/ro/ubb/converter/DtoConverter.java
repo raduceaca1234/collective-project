@@ -59,7 +59,7 @@ public class DtoConverter {
     return Announcement.builder()
         .user(
             User.builder()
-                .id(Integer.parseInt(jwtUtil.decodeJWT(announcementDto.getOwnerId()).getId()))
+                .id(Integer.parseInt(jwtUtil.decodeJWT(announcementDto.getOwnerToken()).getId()))
                 .build())
         .name(announcementDto.getName())
         .location(announcementDto.getLocation())
