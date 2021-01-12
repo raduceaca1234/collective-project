@@ -13,7 +13,10 @@ const FreshAdded = (props) => {
             .then(response => {
                 console.log(response)
                 response.json().then(
-                    res => setList(res)
+                    res => {
+                        setList(res)
+                        console.log(res)
+                    }
                 )
             })
             .catch(error => console.log(error))

@@ -104,15 +104,15 @@ const Navbar = () => {
                 className={styles.side + ' ' + styles.lhs}
                 onClick={() => router.push('/')}
             >
-                App name
+                RentAll
             </div>
 
             <div className={styles.side + ' ' + styles.middle}>
-                <SearchBar />
+                {/* <SearchBar /> */}
             </div>
 
             <div className={styles.side + ' ' + styles.rhs}>
-                <Bag />
+                {/* <Bag /> */}
                 <SavedItems />
                 {(!!user.logged_in) 
                     ? <UserTab />
