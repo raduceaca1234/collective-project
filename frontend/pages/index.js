@@ -14,7 +14,6 @@ const Index = () => {
       <Fresh />
       <CTA />
       <Footer />
-
     </div>
   )
 }
