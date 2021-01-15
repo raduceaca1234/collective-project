@@ -23,7 +23,6 @@ const Cta = ()=>{
                 </div>
                 <div className={styles.buttons}>
                     <Link href="/add" ><a className={styles.postObjectButton}>Post an object</a></Link>
-                    <button className={styles.howItWorksButton}>How it works</button>
                 </div>
             </div>
             

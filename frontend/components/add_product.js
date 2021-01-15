@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Alert } from 'react'
+import { useSelector } from 'react-redux';
 
 import styles from '../styles/add_product.module.scss'
 
@@ -51,6 +52,7 @@ const AddProduct = () => {
     const [files, setFiles] = useState([])
     const ref = useRef()
     const router = useRouter()
+    const user = useSelector(state => (state.user))
 
     const addPhotos = (event) => {
         let newPhotos = Array.from(event.target.files)
@@ -78,7 +80,7 @@ const AddProduct = () => {
 
     const sendDataToServer = () => {
         let data = new FormData(ref.current)
-        data.append("ownerId", "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxIiwiaWF0IjoxNjA1NjQxOTYxLCJleHAiOjE2MDU3MjgzNjF9.MXsI9mlu_AX2IJo4UI4NTYlm83a2wuO6ip0YYkYiBvU")
+        data.append("ownerToken", user.token)
         // data.append("name", "obj1")
         // data.append("description", "t1")
         // data.append("location", "cluj")

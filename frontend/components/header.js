@@ -26,8 +26,8 @@ const Header = () => {
                     </div>
                 </div>
                 <div className={styles.buttons}>
-                    <button className={styles.inventoryButton} onClick={()=>{router.push('/inventory')}}>See inventory</button>
-                    <button className={styles.readMoreButton}>Read more</button>
+                    <button className={styles.inventoryButton} onClick={() => { router.push('/inventory') }}>See inventory</button>
+
                 </div>
             </div>
             <div className={'col-6' + ' ' + styles.left_div}>
