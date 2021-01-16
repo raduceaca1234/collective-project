@@ -122,12 +122,12 @@ const AddProduct = () => {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Product Location</label>
+                                <label>Product Description</label>
                                 <input name="description" type="text"></input>
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Product Description</label>
+                                <label>Product Location</label>
                                 <input name="location" type="text"></input>
                             </div>
 

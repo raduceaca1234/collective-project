@@ -120,7 +120,7 @@ const Inventory = () => {
 
                         <div className={styles.inline}>
                             <input type="checkbox" onChange={toggleFilter} id="AUTO_MOTO" value="AUTO_MOTO"/>
-                            <label htmlFor="AUTO_MOTO">Auto-mott</label>
+                            <label htmlFor="AUTO_MOTO">Auto-moto</label>
                         </div>
 
                         <div className={styles.inline}>
@@ -134,7 +134,7 @@ const Inventory = () => {
                         </div>
 
                         <div className={styles.inline}>
-                            <input type="checkbox" onChange={toggleFilter} id="SPORT" value="Sport"/>
+                            <input type="checkbox" onChange={toggleFilter} id="SPORT" value="SPORT"/>
                             <label htmlFor="SPORT">Sport</label>
                         </div>
                     </div>

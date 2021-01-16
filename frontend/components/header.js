@@ -21,7 +21,7 @@ const Header = () => {
                     <div className={styles.title}>
                         <h1>Ask us instead of them!</h1>
                         <div className={styles.description}>
-                            <p>Borrow items for a period of time over a good price. No more asking a friens and be protected by "borrow insurance".</p>
+                            <p>Borrow items for a period of time over a good price. No more asking a friend!</p>
                         </div>
                     </div>
                 </div>

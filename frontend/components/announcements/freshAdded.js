@@ -9,7 +9,7 @@ const FreshAdded = (props) => {
 
 
     useEffect(() => {
-        fetch(process.env.SERVER_API_URL + '/announcement/0/10')
+        fetch(process.env.SERVER_API_URL + '/announcement/0/20')
             .then(response => {
                 console.log(response)
                 response.json().then(
@@ -39,6 +39,7 @@ const FreshAdded = (props) => {
                 {list.map((item, key) => {
                     return (
                         <Card
+                            id={item.id}
                             key={key}
                             img={(process.env.SERVER_API_URL+'/announcement/thumbnail/'+item.id)}//https:// via.placeholder.com/217x305
                             name={item.name}
